@@ -1,4 +1,4 @@
-import logo from './logo.jpg'
+import logo from './logo.png'
 import logo_dark from './logo_dark.svg'
 import search_icon from './search_icon.svg'
 import cross_icon from './cross_icon.svg'
@@ -823,7 +823,7 @@ export const dummyCourses = [
         "courseRatings": [
             {
                 "userId": "user_2qjlgkAqIMpiR2flWIRzvWKtE0w",
-                "rating": 5,
+                "rating": 4,
                 "_id": "6773e37360cb0ab974342314"
             }
         ],
