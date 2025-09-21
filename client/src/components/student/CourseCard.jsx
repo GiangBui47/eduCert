@@ -8,7 +8,7 @@ const CourseCard = ({ course }) => {
   const { calculateRating } = useContext(AppContext)
   return (
     <Link
-      to='/'
+      to={'/course/' + course._id}
       className='bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-2xl 
              cursor-pointer hover:scale-105 transition-all duration-300 overflow-hidden pb-5
              flex flex-col'

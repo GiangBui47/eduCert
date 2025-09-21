@@ -15,7 +15,7 @@ const Home = () => {
       <CourseSection />
       <CheckCertificate />
       <TopCourseSection />
-      <Footer />
+
     </div>
   )
 }

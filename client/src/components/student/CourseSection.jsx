@@ -22,7 +22,7 @@ const CourseSection = () => {
         <Link
           className='border bg-blue-600
                text-white rounded-lg px-10 py-3 hover:translate-y-0.5 transition-all transform hover:shadow-md'
-          to=''
+          to='/course-list'
         >
           Show all course
         </Link>
