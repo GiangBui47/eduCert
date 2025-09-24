@@ -36,7 +36,7 @@ const CheckCertificate = () => {
                     </button>
                 </div>
 
-                <div className="flex flex-col items-center justify-center p-8 bg-white rounded-xl shadow-sm">
+                <div className="flex flex-col ms-8 items-center justify-center p-8 bg-white rounded-xl shadow">
                     <div className="mb-6 bg-indigo-50 p-4 rounded-lg">
                         <QRCodeSVG
                             value=""

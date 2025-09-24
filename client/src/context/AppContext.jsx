@@ -11,13 +11,11 @@ export const AppContextProvider = ({ children }) => {
   const navigate = useNavigate();
   const [allCourses, setAllCourse] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState(allCourses);
+  const [enrolledCourses, setEnrolledCourses] = useState([])
 
-  useEffect(() => {
-    const fetchAllCourses = async () => {
-      setAllCourse(dummyCourses);
-    };
-    fetchAllCourses();
-  }, []);
+  const fetchAllCourses = async () => {
+    setAllCourse(dummyCourses);
+  };
 
   const calculateRating = (course) => {
     if (course.courseRatings.length === 0) return 0;
@@ -68,6 +66,36 @@ export const AppContextProvider = ({ children }) => {
     return totalLectures;
   };
 
+  const calculateTeacherRating = (teacherId) => {
+    const teacherCourses = allCourses.filter(course => course.educator === teacherId);
+    if (teacherCourses.length === 0) return 0;
+    let totalCourseRating = 0;
+    let countCoursesWithRatings = 0;
+
+    teacherCourses.forEach(course => {
+      const avgCourseRating = calculateRating(course);
+      if (avgCourseRating > 0) {
+        totalCourseRating += avgCourseRating;
+        countCoursesWithRatings++;
+      }
+    });
+
+    if (countCoursesWithRatings === 0) return 0;
+
+    return (totalCourseRating / countCoursesWithRatings).toFixed(1);
+  };
+
+  const fetchUserEnrolledCourse = async () => {
+    setEnrolledCourses(dummyCourses)
+  }
+
+  useEffect(() => {
+    fetchAllCourses();
+    fetchUserEnrolledCourse();
+  }, []);
+
+
+
   const value = {
     currency,
     navigate,
@@ -78,7 +106,9 @@ export const AppContextProvider = ({ children }) => {
     handleSearch,
     calculateChapterTime,
     calculateCourseDuration,
-    calculateNoOfLectures
+    calculateNoOfLectures,
+    calculateTeacherRating,
+    enrolledCourses, fetchUserEnrolledCourse,
   };
 
   return (
