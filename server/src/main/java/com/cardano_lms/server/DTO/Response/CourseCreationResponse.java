@@ -1,0 +1,35 @@
+package com.cardano_lms.server.DTO.Response;
+
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CourseCreationResponse {
+    private String id;
+    private String title;
+    private String description;
+    private String shortDescription;
+    private String requirement;
+    private String imageUrl;
+    private boolean draft;
+    private Integer price;
+    private String currency;
+    private Double discount;
+    private LocalDateTime discountEndTime;
+    private String policyId;
+
+    private InstructorProfileResponse instructorProfileResponse;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    private List<CoursePaymentMethodResponse> coursePaymentMethods;
+    private List<ChapterResponse> chapters;
+    private List<TestResponse> courseTests;
+}
