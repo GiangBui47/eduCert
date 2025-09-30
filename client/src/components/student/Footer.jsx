@@ -43,31 +43,19 @@ const Footer = () => {
                     <h2 className='font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-5 text-lg'>Quick Links</h2>
                     <ul className='flex md:flex-col w-full justify-between text-sm md:space-y-4'>
                         <li>
-                            <Link to="/educator/dashboard" className='text-white/80 hover:text-white transition-colors flex items-center gap-2 group'>
-                                <span className="h-1.5 w-1.5 bg-indigo-500 rounded-full group-hover:w-3 transition-all duration-300"></span>
-                                <span>Educator Dashboard</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/student/my-enrollments" className='text-white/80 hover:text-white transition-colors flex items-center gap-2 group'>
+                            <Link to="/my-enrollment" className='text-white/80 hover:text-white transition-colors flex items-center gap-2 group'>
                                 <span className="h-1.5 w-1.5 bg-indigo-500 rounded-full group-hover:w-3 transition-all duration-300"></span>
                                 <span>My Enrollments</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/student/profile" className='text-white/80 hover:text-white transition-colors flex items-center gap-2 group'>
+                            <Link to="profile" className='text-white/80 hover:text-white transition-colors flex items-center gap-2 group'>
                                 <span className="h-1.5 w-1.5 bg-indigo-500 rounded-full group-hover:w-3 transition-all duration-300"></span>
                                 <span>My Profile</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/student/certificates" className='text-white/80 hover:text-white transition-colors flex items-center gap-2 group'>
-                                <span className="h-1.5 w-1.5 bg-indigo-500 rounded-full group-hover:w-3 transition-all duration-300"></span>
-                                <span>NFT Certificates</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/courses" className='text-white/80 hover:text-white transition-colors flex items-center gap-2 group'>
+                            <Link to="/course-list" className='text-white/80 hover:text-white transition-colors flex items-center gap-2 group'>
                                 <span className="h-1.5 w-1.5 bg-indigo-500 rounded-full group-hover:w-3 transition-all duration-300"></span>
                                 <span>All Courses</span>
                             </Link>

@@ -8,31 +8,94 @@ const ProfilePage = () => {
 
     const [purchaseHistory, setPurchaseHistory] = useState([
         {
-            thumbnail: assets.course_1_thumbnail,
-            content1: 'Java',
-            content2: '23/09/2025',
-            content3: '$10',
-            content4: 'Completed',
+            courseThumbnail: assets.course_1_thumbnail,
+            Course: 'Java Programming Fundamentals',
+            Date: '15/12/2024',
+            Price: '$25',
+            Status: 'Completed',
+        },
+        {
+            courseThumbnail: assets.course_2_thumbnail,
+            Course: 'React.js Complete Guide',
+            Date: '10/12/2024',
+            Price: '$35',
+            Status: 'Completed',
+        },
+        {
+            courseThumbnail: assets.course_3_thumbnail,
+            Course: 'Python Data Science',
+            Date: '05/12/2024',
+            Price: '$30',
+            Status: 'Completed',
+        },
+        {
+            courseThumbnail: assets.course_4_thumbnail,
+            Course: 'Machine Learning Basics',
+            Date: '01/12/2024',
+            Price: '$45',
+            Status: 'Pending',
         },
     ])
 
     const [course, setCourse] = useState([
         {
-            thumbnail: assets.course_1_thumbnail,
-            content1: 'Java',
-            content2: '20h,30m',
-            content3: '10 Lectures',
-            content4: 'Jiang',
+            courseThumbnail: assets.course_1_thumbnail,
+            Course: 'Java Programming Fundamentals',
+            Duration: '25h 45m',
+            Lectures: '15 Lectures',
+            Educator: 'Dr. Sarah Johnson',
+        },
+        {
+            courseThumbnail: assets.course_2_thumbnail,
+            Course: 'React.js Complete Guide',
+            Duration: '18h 30m',
+            Lectures: '12 Lectures',
+            Educator: 'Mike Chen',
+        },
+        {
+            courseThumbnail: assets.course_3_thumbnail,
+            Course: 'Python Data Science',
+            Duration: '32h 15m',
+            Lectures: '20 Lectures',
+            Educator: 'Prof. Emily Davis',
+        },
+        {
+            courseThumbnail: assets.course_4_thumbnail,
+            Course: 'Machine Learning Basics',
+            Duration: '28h 20m',
+            Lectures: '18 Lectures',
+            Educator: 'Dr. Alex Rodriguez',
+        },
+        {
+            courseThumbnail: assets.course_1_thumbnail,
+            Course: 'Web Development Bootcamp',
+            Duration: '40h 00m',
+            Lectures: '25 Lectures',
+            Educator: 'Lisa Wang',
         },
     ])
 
     const [courseCompleted, setCourseCompleted] = useState([
         {
-            thumbnail: assets.course_1_thumbnail,
-            content1: 'Java',
-            content2: '20h,30m',
-            content3: '10/10/2025',
-            content4: '5/5 Lectures',
+            courseThumbnail: assets.course_1_thumbnail,
+            Course: 'Java Programming Fundamentals',
+            Duration: '25h 45m',
+            Date: '15/12/2024',
+            Completed: '15/15 Lectures',
+        },
+        {
+            courseThumbnail: assets.course_2_thumbnail,
+            Course: 'React.js Complete Guide',
+            Duration: '18h 30m',
+            Date: '10/12/2024',
+            Completed: '12/12 Lectures',
+        },
+        {
+            courseThumbnail: assets.course_3_thumbnail,
+            Course: 'Web Development Basics',
+            Duration: '22h 15m',
+            Date: '05/12/2024',
+            Completed: '14/14 Lectures',
         },
     ])
 
@@ -78,7 +141,7 @@ const ProfilePage = () => {
                     >
                         <div className="flex flex-col items-start space-y-1">
                             <h4 className="text-gray-500 text-xs md:text-xl">Course Completed</h4>
-                            <p className="font-bold text-xs md:text-xl">0</p>
+                            <p className="font-bold text-xs md:text-xl">3</p>
                         </div>
                         <FaBookOpen className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
                     </div>
@@ -94,7 +157,7 @@ const ProfilePage = () => {
                     >
                         <div className="flex flex-col items-start space-y-1">
                             <h4 className="text-gray-500 text-xs md:text-xl">Total Course</h4>
-                            <p className="font-bold text-xs md:text-xl">0</p>
+                            <p className="font-bold text-xs md:text-xl">5</p>
                         </div>
                         <FaBook className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
                     </div>
@@ -110,7 +173,7 @@ const ProfilePage = () => {
                     >
                         <div className="flex flex-col items-start space-y-1">
                             <h4 className="text-gray-500 text-xs md:text-xl">Total Purchase</h4>
-                            <p className="font-bold text-xs md:text-xl">0</p>
+                            <p className="font-bold text-xs md:text-xl">4</p>
                         </div>
                         <FaMoneyCheckAlt className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
                     </div>

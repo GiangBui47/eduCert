@@ -17,11 +17,11 @@ const MyEnrollment = () => {
                 <Table
                     columns={['Course', 'Duration', 'Progress', 'Status']}
                     rows={enrolledCourses.map((course) => ({
-                        thumbnail: course.courseThumbnail,
-                        content1: course.courseTitle,
-                        content2: calculateCourseDuration(course),
-                        content3: `4/10 Lectures`,
-                        content4: (
+                        courseThumbnail: course.courseThumbnail,
+                        Course: course.courseTitle,
+                        Duration: calculateCourseDuration(course),
+                        Progress: `4/10 Lectures`,
+                        Status: (
                             <button className='cursor-pointer'>On going</button>
                         ),
                     }))}
