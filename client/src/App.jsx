@@ -9,8 +9,8 @@ import MyEnrollment from './pages/student/MyEnrollment.jsx'
 import Educator from './pages/educator/Educator.jsx'
 import Dashboard from './pages/educator/Dashboard.jsx'
 import AddCourse from './pages/educator/AddCourse.jsx'
-import StudentsEnrolled from './pages/educator/StudentsEnrolled.jsx'
 import Notification from './pages/educator/Notification.jsx'
+import MyCourses from './pages/educator/MyCourses.jsx'
 
 function App() {
 
@@ -28,7 +28,7 @@ function App() {
         <Route path='/educator' element={<Educator />}>
           <Route path='/educator' element={<Dashboard />} />
           <Route path='add-course' element={<AddCourse />} />
-          <Route path='student-enrolled' element={<StudentsEnrolled />} />
+          <Route path='my-courses' element={<MyCourses />} />
           <Route path='notification' element={<Notification />} />
         </Route>
 

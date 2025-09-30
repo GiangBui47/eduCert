@@ -17,7 +17,7 @@ const MyEnrollment = () => {
                 <Table
                     columns={['Course', 'Duration', 'Progress', 'Status']}
                     rows={enrolledCourses.map((course) => ({
-                        thumbnail: course.courseThumbnail,
+                        courseThumbnail: course.courseThumbnail,
                         Course: course.courseTitle,
                         Duration: calculateCourseDuration(course),
                         Progress: `4/10 Lectures`,

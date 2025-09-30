@@ -8,28 +8,28 @@ const ProfilePage = () => {
 
     const [purchaseHistory, setPurchaseHistory] = useState([
         {
-            thumbnail: assets.course_1_thumbnail,
+            courseThumbnail: assets.course_1_thumbnail,
             Course: 'Java Programming Fundamentals',
             Date: '15/12/2024',
             Price: '$25',
             Status: 'Completed',
         },
         {
-            thumbnail: assets.course_2_thumbnail,
+            courseThumbnail: assets.course_2_thumbnail,
             Course: 'React.js Complete Guide',
             Date: '10/12/2024',
             Price: '$35',
             Status: 'Completed',
         },
         {
-            thumbnail: assets.course_3_thumbnail,
+            courseThumbnail: assets.course_3_thumbnail,
             Course: 'Python Data Science',
             Date: '05/12/2024',
             Price: '$30',
-            Status: 'Active',
+            Status: 'Completed',
         },
         {
-            thumbnail: assets.course_4_thumbnail,
+            courseThumbnail: assets.course_4_thumbnail,
             Course: 'Machine Learning Basics',
             Date: '01/12/2024',
             Price: '$45',
@@ -39,35 +39,35 @@ const ProfilePage = () => {
 
     const [course, setCourse] = useState([
         {
-            thumbnail: assets.course_1_thumbnail,
+            courseThumbnail: assets.course_1_thumbnail,
             Course: 'Java Programming Fundamentals',
             Duration: '25h 45m',
             Lectures: '15 Lectures',
             Educator: 'Dr. Sarah Johnson',
         },
         {
-            thumbnail: assets.course_2_thumbnail,
+            courseThumbnail: assets.course_2_thumbnail,
             Course: 'React.js Complete Guide',
             Duration: '18h 30m',
             Lectures: '12 Lectures',
             Educator: 'Mike Chen',
         },
         {
-            thumbnail: assets.course_3_thumbnail,
+            courseThumbnail: assets.course_3_thumbnail,
             Course: 'Python Data Science',
             Duration: '32h 15m',
             Lectures: '20 Lectures',
             Educator: 'Prof. Emily Davis',
         },
         {
-            thumbnail: assets.course_4_thumbnail,
+            courseThumbnail: assets.course_4_thumbnail,
             Course: 'Machine Learning Basics',
             Duration: '28h 20m',
             Lectures: '18 Lectures',
             Educator: 'Dr. Alex Rodriguez',
         },
         {
-            thumbnail: assets.course_1_thumbnail,
+            courseThumbnail: assets.course_1_thumbnail,
             Course: 'Web Development Bootcamp',
             Duration: '40h 00m',
             Lectures: '25 Lectures',
@@ -77,21 +77,21 @@ const ProfilePage = () => {
 
     const [courseCompleted, setCourseCompleted] = useState([
         {
-            thumbnail: assets.course_1_thumbnail,
+            courseThumbnail: assets.course_1_thumbnail,
             Course: 'Java Programming Fundamentals',
             Duration: '25h 45m',
             Date: '15/12/2024',
             Completed: '15/15 Lectures',
         },
         {
-            thumbnail: assets.course_2_thumbnail,
+            courseThumbnail: assets.course_2_thumbnail,
             Course: 'React.js Complete Guide',
             Duration: '18h 30m',
             Date: '10/12/2024',
             Completed: '12/12 Lectures',
         },
         {
-            thumbnail: assets.course_3_thumbnail,
+            courseThumbnail: assets.course_3_thumbnail,
             Course: 'Web Development Basics',
             Duration: '22h 15m',
             Date: '05/12/2024',
