@@ -8,7 +8,6 @@ import Footer from '../../components/student/Footer';
 const CourseList = () => {
     const { allCourses, navigate, filteredCourses, handleSearch } = useContext(AppContext);
 
-
     return (
         <>
             <div className='px-8 pt-10 md:pt-15'>
