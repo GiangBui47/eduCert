@@ -1,23 +1,39 @@
-import React from 'react'
-import Hero from '../../components/student/Hero'
-import StepMint from '../../components/student/StepMint'
-import CourseSection from '../../components/student/CourseSection'
-import CheckCertificate from '../../components/student/CheckCertificate'
-import TopCourseSection from '../../components/student/TopCourseSection'
-import Footer from '../../components/student/Footer'
-
+import React, { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import Hero from '../../components/student/Hero';
+import CoursesSection from '../../components/student/CoursesSection';
+import CallToAction from '../../components/student/CallToAction';
+import Footer from '../../components/student/Footer';
+import TransactionChecker from '../../components/student/TransactionChecker';
+import SplashScreen from '../../components/common/SplashScreen';
 
 const Home = () => {
-  return (
-    <div className='w-full space-y-15 md:space-y-25'>
-      <Hero />
-      <StepMint />
-      <CourseSection />
-      <CheckCertificate />
-      <TopCourseSection />
+    const [showSplash, setShowSplash] = useState(true);
+    
+    useEffect(() => {
+        setShowSplash(true);
+        window.scrollTo(0, 0);
+        document.body.style.overflow = 'hidden';
+    }, []);
 
-    </div>
-  )
+    return (
+        <>
+            <AnimatePresence>
+                {showSplash && <SplashScreen onComplete={() => {
+                    setShowSplash(false);
+                    document.body.style.overflow = 'auto';
+                }} />}
+            </AnimatePresence>
+            
+            <div className='flex flex-col items-center space-y-7 text-center'>
+                <Hero />
+                <CoursesSection />
+                <TransactionChecker />
+                <CallToAction />
+                <Footer />
+            </div>
+        </>
+    );
 }
 
-export default Home
+export default Home;
