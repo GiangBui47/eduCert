@@ -1,108 +1,163 @@
-import React, { useState } from 'react'
-import { FaBook } from 'react-icons/fa'
-import { MdPeople } from "react-icons/md";
-import { RiMoneyEuroCircleLine } from "react-icons/ri";
-import Table from '../../components/student/Table'
-import { assets } from '../../assets/assets';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../../context/AppContext';
+import Loading from '../../components/student/Loading'
+import axios from 'axios'
+import { toast } from 'react-toastify';
+
 const Dashboard = () => {
-    const [activeTab, setActiveTab] = useState('totalEarning');
+    const [dashboardData, setDashboardData] = useState(null)
+    const { currency, backendUrl, isEducator, getToken } = useContext(AppContext)
 
-    const [totalEarning, setTotalEarning] = useState([])
-    const [course, setCourse] = useState([])
-    const [totalEnrollment, setTotalEnrollment] = useState([])
+    const fetchDashboardData = async () => {
+        try {
+            const token = await getToken()
+            const { data } = await axios.get(`${backendUrl}/api/educator/dashboard`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            )
+            if (data.success) {
+                const modifiedData = {
+                    ...data.dashboardData,
+                    enrolledStudentsData: [...data.dashboardData.enrolledStudentsData]
+                        .reverse()
+                        .slice(0, 5)
+                };
+                setDashboardData(modifiedData);
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
 
-    return (
-        <div className='flex flex-col relative w-full'>
-            <h1 className='text-2xl md:text-4xl font-semibold mb-3'>Dashboard</h1>
-            <p className='text-[14px] font-normal text-gray-500'>Overview of your teaching activity</p>
+    const handleVisibilityChange = () => {
+        if (!document.hidden && isEducator) {
+            fetchDashboardData();
+        }
+    };
 
-            {/* Cards */}
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Total Earning */}
-                <div
-                    onClick={() => setActiveTab(activeTab === 'totalEarning' ? null : 'totalEarning')}
-                    className={`flex items-center border ${activeTab === 'totalEarning' ? 'border-2 border-blue-500' : 'border-gray-300'}
-                     shadow-lg md:shadow-2xl bg-white px-5 py-5 rounded-lg gap-4 z-10 hover:scale-105 transition-all duration-300 cursor-pointer`}>
-                    <RiMoneyEuroCircleLine className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
-                    <div className="flex flex-col items-start space-y-1">
-                        <h4 className="text-gray-500 text-xs md:text-xl">Total Earning</h4>
-                        <p className="font-bold text-xs md:text-xl">0</p>
+    useEffect(() => {
+        if (!isEducator) return;
+
+        fetchDashboardData();
+        
+        const intervalId = setInterval(fetchDashboardData, 2000);
+        
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        
+        return () => {
+            clearInterval(intervalId);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [isEducator]);
+
+    return dashboardData ? (
+        <div className='min-h-screen flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0 bg-gradient-to-b from-blue-50 to-white'>
+            <div className='w-full max-w-7xl mx-auto'>
+                <div className='mb-8'>
+                    <h1 className='text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2'>
+                        <div className='w-1.5 h-8 bg-blue-600 rounded-full mr-2'></div>
+                        Dashboard
+                    </h1>
+                    <p className='text-gray-600 ml-5'>Overview of your teaching activity</p>
+                </div>
+                
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
+                    <div className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow'>
+                        <div className='p-5 flex items-center gap-4'>
+                            <div className='p-3 rounded-full bg-blue-100 text-blue-600'>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className='text-3xl font-bold text-gray-800'>{dashboardData.totalCourses}</p>
+                                <p className='text-sm text-gray-500'>Total Courses</p>
+                            </div>
+                        </div>
+                        <div className='h-1 w-full bg-gradient-to-r from-blue-500 to-indigo-600'></div>
+                    </div>
+
+                    <div className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow'>
+                        <div className='p-5 flex items-center gap-4'>
+                            <div className='p-3 rounded-full bg-indigo-100 text-indigo-600'>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className='text-3xl font-bold text-gray-800'>{dashboardData.enrolledStudentsData.length}</p>
+                                <p className='text-sm text-gray-500'>Total Enrollments</p>
+                            </div>
+                        </div>
+                        <div className='h-1 w-full bg-gradient-to-r from-indigo-500 to-purple-600'></div>
+                    </div>
+
+                    <div className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow'>
+                        <div className='p-5 flex items-center gap-4'>
+                            <div className='p-3 rounded-full bg-green-100 text-green-600'>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className='text-3xl font-bold text-gray-800'>{currency}{Number(dashboardData.totalEarnings).toFixed(2)}</p>
+                                <p className='text-sm text-gray-500'>Total Earnings</p>
+                            </div>
+                        </div>
+                        <div className='h-1 w-full bg-gradient-to-r from-green-500 to-emerald-600'></div>
                     </div>
                 </div>
 
-                {/* Total Course */}
-                <div
-                    onClick={() => setActiveTab(activeTab === 'course' ? null : 'course')}
-                    className={`flex items-center border ${activeTab === 'course' ? 'border-2 border-blue-500' : 'border-gray-300'}
-                 shadow-lg md:shadow-2xl bg-white px-5 py-5 rounded-lg gap-4 z-10 hover:scale-105 transition-all duration-300 cursor-pointer`}>
-                    <FaBook className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
-                    <div className="flex flex-col items-start space-y-1">
-                        <h4 className="text-gray-500 text-xs md:text-xl">Total Course</h4>
-                        <p className="font-bold text-xs md:text-xl">0</p>
-                    </div>
-                </div>
-
-                {/* Total Enrollment */}
-                <div onClick={() => setActiveTab(activeTab === 'totalEnrollment' ? null : 'totalEnrollment')}
-                    className={`flex items-center border ${activeTab === 'purchase' ? 'border-2 border-blue-500' : 'border-gray-300'} 
-                    shadow-lg md:shadow-2xl bg-white px-5 py-5 rounded-lg gap-4 z-10 hover:scale-105 transition-all duration-300 cursor-pointer`}>
-                    <MdPeople className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
-                    <div className="flex flex-col items-start space-y-1">
-                        <h4 className="text-gray-500 text-xs md:text-xl">Total Enrollment</h4>
-                        <p className="font-bold text-xs md:text-xl">0</p>
+                <div className='mb-8'>
+                    <h2 className='text-xl font-semibold text-gray-800 mb-4 flex items-center'>
+                        <div className='w-1 h-5 bg-blue-600 rounded-full mr-2'></div>
+                        Latest Enrollments
+                    </h2>
+                    
+                    <div className='w-full overflow-hidden rounded-lg shadow-sm bg-white border border-gray-200'>
+                        <div className='overflow-x-auto'>
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gradient-to-r from-blue-50 to-indigo-50 text-left">
+                                    <tr>
+                                        <th className="px-4 py-3.5 text-sm font-semibold text-gray-700 w-16 text-center">#</th>
+                                        <th className="px-4 py-3.5 text-sm font-semibold text-gray-700">Student</th>
+                                        <th className="px-4 py-3.5 text-sm font-semibold text-gray-700">Course</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {dashboardData.enrolledStudentsData.map((item, index) => (
+                                        <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-4 py-3.5 text-sm text-center text-gray-500">{index + 1}</td>
+                                            <td className="px-4 py-3.5 text-sm">
+                                                <div className="flex items-center gap-3">
+                                                    <img
+                                                        src={item.student.imageUrl}
+                                                        alt="Profile"
+                                                        className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                                                    />
+                                                    <div className="font-medium text-gray-900">{item.student.name}</div>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3.5 text-sm text-gray-700">{item.courseTitle}</td>
+                                        </tr>
+                                    ))}
+                                    
+                                    {dashboardData.enrolledStudentsData.length === 0 && (
+                                        <tr>
+                                            <td colSpan="3" className="px-4 py-8 text-sm text-center text-gray-500">
+                                                No enrollments yet
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            {/* Total Earning Tab */}
-            {activeTab === 'totalEarning' && (
-                <div className="px-5 py-5 mt-10 md:mt-20 bg-white border border-gray-300 rounded-lg">
-                    <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 
-              bg-clip-text text-transparent"> Earning </h2>
-                    {totalEarning.length > 0 ? (
-                        <Table
-                            columns={['Course', 'Duration', 'Date', 'Completed']}
-                            rows={totalEarning}
-                        />
-                    ) : (
-                        <p className="text-sm text-blue-700 mt-5">No Earning.</p>
-                    )}
-                </div>
-            )}
-
-            {/* Course Tab */}
-            {activeTab === 'course' && (
-                <div className="px-5 py-5 mt-10 md:mt-20 bg-white border border-gray-300 rounded-lg">
-                    <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 
-              bg-clip-text text-transparent"> Course </h2>
-                    {course.length > 0 ? (
-                        <Table
-                            columns={['Course', 'Duration', 'Lectures', 'Educator']}
-                            rows={course}
-                        />
-                    ) : (
-                        <p className="text-sm text-blue-700 mt-5">No Course found.</p>
-                    )}
-                </div>
-            )}
-
-            {/* Purchase Tab */}
-            {activeTab === 'totalEnrollment' && (
-                <div className="px-5 py-5 mt-10 md:mt-20 bg-white border border-gray-300 rounded-lg">
-                    <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 
-              bg-clip-text text-transparent"> List Student </h2>
-                    {totalEnrollment.length > 0 ? (
-                        <Table
-                            columns={['Course', 'Date', 'Price', 'Status']}
-                            rows={totalEnrollment}
-                        />
-                    ) : (
-                        <p className="text-sm text-blue-700 mt-5">No Student found.</p>
-                    )}
-                </div>
-            )}
         </div>
-    )
+    ) : <Loading />
 }
 
-export default Dashboard
+export default Dashboard;
