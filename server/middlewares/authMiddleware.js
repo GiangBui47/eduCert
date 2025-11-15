@@ -10,6 +10,7 @@ export const protectEducator = async (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Unauthorized Access' });
         }
 
+        // Get or create user in our database
         let user = await User.findById(userId);
         if (!user) {
             user = await User.create({
@@ -27,3 +28,4 @@ export const protectEducator = async (req, res, next) => {
         res.status(401).json({ success: false, message: error.message });
     }
 };
+

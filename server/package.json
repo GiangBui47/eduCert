@@ -40,9 +40,5 @@
     "svix": "^1.42.0",
     "uniqid": "^5.4.0",
     "uuid": "^11.1.0"
-  },
-  "devDependencies": {
-    "node-addon-api": "^8.5.0",
-    "prebuild-install": "^7.1.3"
   }
 }
