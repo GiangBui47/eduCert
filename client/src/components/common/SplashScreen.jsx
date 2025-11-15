@@ -273,27 +273,47 @@ function CircularDesign() {
   )
 }
 
-export default function LMSCardanoLogo({ onClick, className = "" }) {
+// SplashScreen component that will show for 8 seconds or until clicked
+const SplashScreen = ({ onComplete }) => {
+  // Xử lý khi người dùng click vào splash screen
+  const handleClick = () => {
+    if (onComplete) onComplete();
+  };
+
+  useEffect(() => {
+    // Set a timeout to call onComplete after 8 seconds
+    const timer = setTimeout(() => {
+      if (onComplete) onComplete();
+    }, 8000);
+
+    // Clean up the timer if the component unmounts
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
   return (
-    <div 
-      className={`flex items-center gap-2 cursor-pointer ${className}`} 
-      onClick={onClick}
-      style={{ display: 'flex', alignItems: 'center' }}
+    <motion.div 
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 cursor-pointer"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      onClick={handleClick}
     >
-      <div className="w-10 h-10">
+      <div className="w-[80vmin] max-w-[600px] min-w-[300px]">
         <CircularDesign />
       </div>
       
-      {/* Logo text */}
-      <div className="text-center">
-        <h1 className="text-sm font-bold tracking-tight flex items-center gap-1">
-          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-extrabold">
-            LMS
-          </span>
-          <span className="text-gray-700 font-light">-</span>
-          <span className="text-gray-800 font-semibold">CaUTC</span>
-        </h1>
-      </div>
-    </div>
-  )
-}
+      {/* URL hiển thị phía dưới */}
+      <motion.div 
+        className="mt-8 text-white text-lg font-medium opacity-70"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 0.7, y: 0 }}
+        transition={{ delay: 1, duration: 1 }}
+      >
+        By team_blockchain
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default SplashScreen;
