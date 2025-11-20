@@ -1,0 +1,165 @@
+Q: Làm thế nào để đăng ký khóa học mới?
+A: Anh/Chị có thể đăng ký khóa học trực tuyến bằng cách đăng nhập vào hệ thống LMS, chọn khóa học mong muốn và nhấn nút “Đăng ký học”.
+
+Q: Tôi quên mật khẩu tài khoản học thì làm thế nào?
+A: Anh/Chị chọn “Quên mật khẩu” tại trang đăng nhập, sau đó nhập email đã đăng ký để hệ thống gửi liên kết đặt lại mật khẩu.
+
+Q: Làm sao để tạo tài khoản học viên mới?
+A: Truy cập trang chủ hệ thống LMS, nhấn “Đăng ký”, điền thông tin cá nhân và xác nhận qua email để kích hoạt tài khoản.
+
+Q: Khóa học này có học phí bao nhiêu?
+A: Học phí tùy từng khóa học, được hiển thị rõ trong phần mô tả chi tiết. Anh/Chị cũng có thể liên hệ bộ phận tư vấn để biết thông tin ưu đãi hiện tại.
+
+Q: Hệ thống có hỗ trợ học miễn phí không?
+A: Có. Một số khóa học cơ bản được mở miễn phí để học viên trải nghiệm trước khi quyết định học nâng cao.
+
+Q: Tôi có thể thanh toán học phí bằng phương thức nào?
+A: Hệ thống chấp nhận thanh toán qua thẻ ngân hàng, ví điện tử, chuyển khoản hoặc mã QR.
+
+Q: Nếu tôi đã thanh toán nhưng chưa được kích hoạt khóa học thì làm sao?
+A: Anh/Chị vui lòng liên hệ bộ phận hỗ trợ qua email hoặc chat trực tiếp để được xác minh và kích hoạt nhanh nhất.
+
+Q: Tôi có thể học khóa học này trên điện thoại không?
+A: Có. LMS hỗ trợ học trên mọi thiết bị như máy tính, điện thoại, máy tính bảng.
+
+Q: Học online có cần cài phần mềm gì không?
+A: Không bắt buộc. Anh/Chị chỉ cần trình duyệt web hoặc ứng dụng LMS là có thể học mọi lúc, mọi nơi.
+
+Q: Làm thế nào để xem tiến độ học tập của tôi?
+A: Vào mục “Tiến độ học tập” trong tài khoản để theo dõi phần trăm hoàn thành, điểm kiểm tra và chứng chỉ.
+
+Q: Nếu tôi bị mất kết nối khi đang học thì có bị mất dữ liệu không?
+A: Không. Hệ thống tự động lưu tiến độ học ngay tại thời điểm ngắt kết nối, Anh/Chị có thể học tiếp từ chỗ đã dừng.
+
+Q: Tôi có thể tải tài liệu khóa học về không?
+A: Tùy từng khóa học. Nếu giảng viên cho phép, sẽ có nút “Tải tài liệu” bên cạnh mỗi bài học.
+
+Q: Tôi có thể học cùng lúc nhiều khóa được không?
+A: Có. Hệ thống cho phép học viên học song song nhiều khóa học khác nhau.
+
+Q: Học xong khóa này có được cấp chứng chỉ không?
+A: Có. Khi hoàn thành khóa học và đạt đủ yêu cầu, hệ thống sẽ cấp chứng chỉ điện tử.
+
+Q: Làm sao để tải chứng chỉ về máy tính?
+A: Sau khi đạt yêu cầu, Anh/Chị có thể truy cập mục “Chứng chỉ của tôi” và tải file PDF về máy.
+
+Q: Tôi có thể in chứng chỉ ra giấy không?
+A: Có. Chứng chỉ điện tử có mã xác thực và có thể in ra để sử dụng chính thức.
+
+Q: Làm thế nào để liên hệ giảng viên khi có thắc mắc?
+A: Anh/Chị có thể gửi câu hỏi trong mục “Thảo luận” của bài học hoặc qua khung “Hỏi giảng viên”.
+
+Q: Tôi không thấy bài kiểm tra cuối khóa, tại sao?
+A: Một số bài kiểm tra chỉ mở khi học viên hoàn thành toàn bộ nội dung bài học trước đó.
+
+Q: Nếu tôi thi không đạt thì có được làm lại không?
+A: Có. Hệ thống cho phép làm lại bài kiểm tra tối đa 3 lần tùy quy định của khóa học.
+
+Q: Tôi muốn học lại bài giảng cũ thì làm thế nào?
+A: Anh/Chị vào mục “Khóa học của tôi” → chọn khóa học → chọn bài giảng muốn xem lại.
+
+Q: Tôi bị lỗi không mở được video học, xử lý thế nào?
+A: Vui lòng kiểm tra kết nối Internet hoặc thử tải lại trang. Nếu vẫn không được, liên hệ bộ phận kỹ thuật để được hỗ trợ.
+
+Q: Hệ thống LMS có hỗ trợ học offline không?
+A: Một số bài giảng có thể tải về để học offline, tùy thuộc quyền cài đặt của giảng viên.
+
+Q: Tôi có thể thay đổi ảnh đại diện tài khoản không?
+A: Có. Anh/Chị vào “Tài khoản cá nhân” → “Cập nhật thông tin” → chọn ảnh mới để tải lên.
+
+Q: Có thể đổi email đăng ký được không?
+A: Vì lý do bảo mật, email đăng ký không thể thay đổi. Tuy nhiên, bạn có thể thêm email phụ để nhận thông báo.
+
+Q: Tôi bị lỗi khi nộp bài, có thể gửi lại không?
+A: Có. Anh/Chị có thể gửi lại trong thời gian cho phép. Nếu quá hạn, liên hệ giảng viên để được hỗ trợ.
+
+Q: Làm sao để biết mình đã hoàn thành khóa học?
+A: Khi hoàn thành 100% bài học và bài kiểm tra, trạng thái sẽ hiển thị “Đã hoàn thành”.
+
+Q: Tôi có được nhắc nhở khi sắp hết hạn khóa học không?
+A: Có. Hệ thống sẽ gửi email và thông báo trước 3 ngày khi khóa học sắp hết hạn.
+
+Q: Tôi muốn đổi sang khóa học khác thì có được không?
+A: Có thể đổi nếu khóa học mới tương đương và bạn chưa học quá 30% nội dung khóa hiện tại.
+
+Q: Trung tâm có hoàn tiền khi học viên nghỉ không?
+A: Chính sách hoàn tiền tùy từng khóa học. Anh/Chị vui lòng xem điều khoản tại mục “Chính sách học phí”.
+
+Q: Tôi muốn học thử trước khi đăng ký chính thức có được không?
+A: Có. Một số khóa có phần “Học thử miễn phí”, Anh/Chị có thể trải nghiệm trước khi đăng ký.
+
+Q: Làm thế nào để biết khi có khóa học mới?
+A: Anh/Chị sẽ nhận thông báo qua email hoặc xem tại mục “Khóa học mới nhất” trên giao diện chính.
+
+Q: Tôi có thể gửi phản hồi cho giảng viên không?
+A: Có. Sau mỗi khóa học, hệ thống sẽ hiển thị form “Đánh giá khóa học” để học viên gửi nhận xét.
+
+Q: Nếu tôi quên đăng xuất ở máy công cộng thì có sao không?
+A: Hệ thống tự động đăng xuất sau 30 phút không hoạt động để bảo mật tài khoản.
+
+Q: Tôi có thể đổi mật khẩu không?
+A: Có. Truy cập “Tài khoản của tôi” → “Đổi mật khẩu” để cập nhật.
+
+Q: Tôi có thể học theo tốc độ riêng không?
+A: Có. Các khóa học online cho phép học viên học theo nhịp độ cá nhân, không giới hạn thời gian mỗi bài.
+
+Q: Có lớp học trực tiếp không?
+A: Một số khóa có tổ chức lớp học offline. Thông tin sẽ được thông báo cụ thể trong phần mô tả khóa.
+
+Q: Làm sao để tham gia buổi học trực tuyến trực tiếp (live)?
+A: Vào phần “Lịch học trực tuyến” và nhấn vào liên kết Zoom/Google Meet được cung cấp.
+
+Q: Tôi có thể xem lịch học của mình ở đâu?
+A: Lịch học hiển thị trong mục “Lịch của tôi” hoặc ngay trên trang Dashboard.
+
+Q: Hệ thống có tự động nhắc tôi học mỗi ngày không?
+A: Có. Anh/Chị có thể bật “Thông báo học tập hàng ngày” trong phần cài đặt.
+
+Q: Tôi có thể chia sẻ chứng chỉ lên mạng xã hội không?
+A: Có. Mỗi chứng chỉ đều có nút “Chia sẻ” để đăng trực tiếp lên LinkedIn, Facebook hoặc tải liên kết chia sẻ.
+
+Q: Nếu tôi bị khóa tài khoản thì xử lý thế nào?
+A: Liên hệ bộ phận hỗ trợ học viên qua email hoặc hotline để được mở khóa sau khi xác minh danh tính.
+
+Q: Tôi muốn cập nhật ảnh bìa khóa học thì làm sao?
+A: Tính năng này chỉ dành cho giảng viên hoặc quản trị viên. Học viên không thể chỉnh sửa nội dung khóa.
+
+Q: Tôi có thể xem bảng xếp hạng học viên không?
+A: Có. Một số khóa có bảng “Top học viên” thể hiện điểm và tiến độ học cao nhất.
+
+Q: Tôi muốn trở thành giảng viên thì làm thế nào?
+A: Anh/Chị có thể gửi hồ sơ đăng ký giảng viên tại trang “Trở thành giảng viên” kèm thông tin kinh nghiệm và chuyên môn.
+
+Q: Hệ thống LMS có ứng dụng di động không?
+A: Có. Anh/Chị có thể tải ứng dụng LMS trên Google Play hoặc App Store để học thuận tiện hơn.
+
+Q: Tôi muốn đổi ngôn ngữ giao diện thì làm thế nào?
+A: Vào phần “Cài đặt” → “Ngôn ngữ” → chọn ngôn ngữ mong muốn (Việt/Anh).
+
+Q: Làm sao để biết tôi còn bao nhiêu ngày học?
+A: Thông tin thời hạn khóa học hiển thị ngay trong phần chi tiết khóa hoặc mục “Tiến độ học”.
+
+Q: Hệ thống có hỗ trợ học viên nước ngoài không?
+A: Có. LMS hỗ trợ đa ngôn ngữ và nhiều múi giờ khác nhau để phù hợp với học viên toàn cầu.
+
+Q: Tôi muốn đề xuất thêm tính năng cho hệ thống thì làm thế nào?
+A: Vào mục “Góp ý & Phản hồi” trong phần cài đặt để gửi đề xuất tới đội phát triển hệ thống.
+
+Q: Tôi có thể xem lại lịch sử học tập từ các năm trước không?
+A: Có. Tất cả dữ liệu học tập đều được lưu trữ trong hồ sơ tài khoản của bạn.
+
+Q: Tôi bị mất điểm bài kiểm tra, có thể khôi phục không?
+A: Nếu lỗi hệ thống, đội kỹ thuật sẽ khôi phục kết quả sau khi xác minh log hoạt động.
+
+Q: Làm sao để xem thông báo mới nhất từ giảng viên?
+A: Truy cập mục “Thông báo” trong dashboard hoặc bật thông báo đẩy để không bỏ lỡ cập nhật.
+
+Q: Tôi muốn thay đổi tên hiển thị của mình thì làm sao?
+A: Vào “Tài khoản cá nhân” → “Thông tin cá nhân” → chỉnh sửa trường “Tên hiển thị”.
+
+Q: Tôi có thể xem video ở tốc độ nhanh hơn không?
+A: Có. Trình phát video trên LMS hỗ trợ thay đổi tốc độ từ 0.5x đến 2x.
+
+Q: Làm sao để biết khi nào có sự kiện học tập hoặc workshop mới?
+A: Hệ thống sẽ gửi email thông báo và hiển thị banner trên trang chủ khi có sự kiện sắp tới.
+
