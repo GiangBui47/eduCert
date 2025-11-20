@@ -53,7 +53,7 @@ export const addCourse = async (req, res) => {
         // Tạo stream từ buffer và upload lên Cloudinary
         return new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
-                { folder: "course_thumbnails" },
+                { folder: "lms" },
                 (error, result) => {
                     if (error) {
                         console.error("Upload error:", error);
