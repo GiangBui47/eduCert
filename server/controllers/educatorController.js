@@ -9,6 +9,10 @@ import Certificate from "../models/Certificate.js";
 export const updatetoRoleToEducator = async (req, res) => {
     try {
         const userId = req.auth.userId;
+        const clerkUser = await clerkClient.users.getUser(userId);
+        if (clerkUser.publicMetadata?.role === 'admin') {
+            return res.json({ success: false, message: 'Admin accounts cannot switch to educator' });
+        }
 
         await clerkClient.users.updateUserMetadata(userId, {
             publicMetadata: {

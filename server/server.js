@@ -20,6 +20,7 @@ import violationRouter from './routes/violationRoutes.js'
 import violationNFTRouter from './routes/violationNFTRoutes.js'
 import violationCounterRouter from './routes/violationCounterRoutes.js'
 import profileRouter from './routes/profileRoutes.js'
+import adminRouter from './routes/adminRoutes.js'
 
 const app = express()
 
@@ -52,6 +53,7 @@ app.use('/api/blockchain', express.json(), blockchainRouter)
 app.use('/api/nft', express.json(), nftRouter)
 
 app.use('/api/profile', express.json(), profileRouter)
+app.use('/api/admin', express.json(), adminRouter)
 
 app.use('/api/address', express.json(), addressRouter)
 

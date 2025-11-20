@@ -10,12 +10,17 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useUser();
+
     const { openSignIn } = useClerk();
     const { isEducator, backendUrl, setIsEducator, getToken } = useContext(AppContext);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const becomeEducator = async () => {
         try {
+            if (user?.publicMetadata?.role === 'admin') {
+                navigate('/admin');
+                return;
+            }
             if (isEducator) {
                 navigate('/educator');
                 return;
@@ -53,15 +58,17 @@ const Navbar = () => {
                             >
                                 Home
                             </Link>
-                            <button 
-                                onClick={() => {
-                                    window.scrollTo(0, 0);
-                                    becomeEducator();
-                                }} 
-                                className={`text-sm font-medium transition-all duration-300 relative ${isEducator ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}`}
-                            >
-                                {isEducator ? 'Educator Dashboard' : 'Become Educator'}
-                            </button>
+                            {user?.publicMetadata?.role !== 'admin' && (
+                                <button 
+                                    onClick={() => {
+                                        window.scrollTo(0, 0);
+                                        becomeEducator();
+                                    }} 
+                                    className={`text-sm font-medium transition-all duration-300 relative ${isEducator ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}`}
+                                >
+                                    {isEducator ? 'Educator Dashboard' : 'Become Educator'}
+                                </button>
+                            )}
                             <button 
                                 onClick={() => {
                                     window.scrollTo(0, 0);
@@ -87,6 +94,15 @@ const Navbar = () => {
                             >
                                 My Profile
                             </Link>
+                            {user?.publicMetadata?.role === 'admin' && (
+                                <Link 
+                                    to='/admin' 
+                                    onClick={() => window.scrollTo(0, 0)}
+                                    className={`text-sm font-medium transition-all duration-300 relative ${location.pathname === '/admin' ? 'text-blue-600 font-semibold after:content-[""] after:absolute after:w-full after:h-0.5 after:bg-blue-600 after:bottom-[-8px] after:left-0 after:rounded-full' : 'text-gray-600 hover:text-purple-600'}`}
+                                >
+                                    Admin
+                                </Link>
+                            )}
                         </>
                     )}
                 </div>
@@ -158,16 +174,18 @@ const Navbar = () => {
                                 >
                                     Courses
                                 </button>
-                                <button 
-                                    onClick={() => {
-                                        window.scrollTo(0, 0);
-                                        becomeEducator();
-                                        setMobileMenuOpen(false);
-                                    }} 
-                                    className={`px-4 py-2 text-sm font-medium transition-all duration-300 text-left rounded-md ${isEducator ? 'bg-green-50 text-green-600 font-semibold' : 'text-gray-600 hover:bg-gray-50'}`}
-                                >
-                                    {isEducator ? 'Educator Dashboard' : 'Become Educator'}
-                                </button>
+                                {user?.publicMetadata?.role !== 'admin' && (
+                                    <button 
+                                        onClick={() => {
+                                            window.scrollTo(0, 0);
+                                            becomeEducator();
+                                            setMobileMenuOpen(false);
+                                        }} 
+                                        className={`px-4 py-2 text-sm font-medium transition-all duration-300 text-left rounded-md ${isEducator ? 'bg-green-50 text-green-600 font-semibold' : 'text-gray-600 hover:bg-gray-50'}`}
+                                    >
+                                        {isEducator ? 'Educator Dashboard' : 'Become Educator'}
+                                    </button>
+                                )}
                                 <Link 
                                     to='/my-enrollments' 
                                     onClick={() => {
@@ -188,6 +206,18 @@ const Navbar = () => {
                                 >
                                     My Profile
                                 </Link>
+                                {user?.publicMetadata?.role === 'admin' && (
+                                    <Link 
+                                        to='/admin' 
+                                        onClick={() => {
+                                            window.scrollTo(0, 0);
+                                            setMobileMenuOpen(false);
+                                        }}
+                                        className={`px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md ${location.pathname === '/admin' ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-600 hover:bg-gray-50'}`}
+                                    >
+                                        Admin
+                                    </Link>
+                                )}
                             </>
                         )}
                         {!user && (

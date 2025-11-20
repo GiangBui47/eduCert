@@ -6,6 +6,7 @@ export const createCourseTx = async (req, res) => {
     try {
         const { courseData, utxos, collateral, address } = req.body;
         const educatorId = req.auth.userId;
+        const COOLDOWN_MS = parseInt(process.env.COURSE_MINT_COOLDOWN_MS || '60000', 10);
 
         // Validate required fields
         if (!courseData || !utxos || !collateral || !address) {
@@ -29,12 +30,11 @@ export const createCourseTx = async (req, res) => {
             const now = new Date();
             if (user.lastCourseCreatedAt) {
                 const diff = now - user.lastCourseCreatedAt;
-                const ONE_MIN = 10 * 60 * 1000;
-                if (diff < ONE_MIN) {
-                    const timeLeft = ONE_MIN - diff;
+                if (diff < COOLDOWN_MS) {
+                    const timeLeft = COOLDOWN_MS - diff;
                     return res.status(400).json({
                         success: false,
-                        message: 'You can only mint a course every 1 minute. Please wait before minting another course.',
+                        message: 'Minting too fast. Please wait before minting another course.',
                         timeLeft: timeLeft
                     });
                 }

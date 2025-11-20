@@ -22,6 +22,7 @@ import CertificateViewer from './pages/student/CertificateViewer';
 import Subscription from './pages/educator/Subscription';
 import TransactionChecker from './components/student/TransactionChecker';
 import Violations from './pages/educator/Violations';
+import Admin from './pages/admin/Admin.jsx';
 
 
 const App = () => {
@@ -45,6 +46,8 @@ const App = () => {
         <Route path="/courses" element={<CoursesList />} />
         <Route path="/certificate/:txHash" element={<CertificateViewer />} />
         <Route path="/verify" element={<TransactionChecker />} />
+
+        <Route path='/admin' element={<Admin />} />
 
 
         <Route path='/educator' element={<Educator />}>

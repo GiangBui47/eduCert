@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { FaGraduationCap, FaBook, FaChartLine, FaCoins, FaIdCard } from 'react-icons/fa';
+import { FaGraduationCap, FaBook, FaChartLine, FaCoins, FaIdCard, FaInfoCircle } from 'react-icons/fa';
 
 const Popup = ({ title, onClose, children }) => (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
@@ -96,7 +96,10 @@ const CourseSlider = ({ enrolledCourses, progressArray, sliderSettings }) => (
         </div>
       ) : (
         <div className="bg-blue-50 border-l-4 border-blue-500 p-5 rounded-r-lg shadow-sm">
-          <div className="flex"><div className="flex-shrink-0"><svg className="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 0 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2h1a1 1 0 011 1v3h1a1 1 0 01-1 1-1-2h0v-3h-1a1 1 0 0-1-1H9z" clipRule="evenodd" /></svg></div><div className="ml-3"><p className="text-sm text-blue-700">You haven't enrolled in any courses yet. Explore our course catalog to find something that interests you!</p></div></div>
+          <div className="flex">
+            <div className="flex-shrink-0"><FaInfoCircle className="h-5 w-5 text-blue-500" /></div>
+            <div className="ml-3"><p className="text-sm text-blue-700">You haven't enrolled in any courses yet. Explore our course catalog to find something that interests you!</p></div>
+          </div>
         </div>
       )}
     </div>
@@ -150,7 +153,11 @@ const ProfilePage = () => {
       const token = await getToken();
       const { data } = await axios.get(`${backendUrl}/api/profile/user/${user.id}`, { headers: { Authorization: `Bearer ${token}` } });
       if (data.success && data.profile) { setCccd(data.profile.cccd || ''); setProfileImageUrl(data.profile.imageUrl || ''); }
-    } catch (error) { console.log('No profile found or error fetching profile:', error.message); } finally { setLoading(false); }
+    } catch (error) {
+      if (error?.response?.status !== 404) {
+        console.warn('Error fetching profile:', error.message);
+      }
+    } finally { setLoading(false); }
   };
 
   const getCourseProgress = async () => {

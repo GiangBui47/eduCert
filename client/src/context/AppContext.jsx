@@ -9,8 +9,8 @@ import { toast } from 'react-toastify';
 export const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const currency = process.env.REACT_APP_CURRENCY;
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const currency = process.env.REACT_APP_CURRENCY || 'USD';
     const navigate = useNavigate();
     const location = useLocation();
     const { getToken } = useAuth();
