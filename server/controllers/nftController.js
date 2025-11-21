@@ -7,7 +7,7 @@ import { Purchase } from '../models/Purchase.js';
 // Initialize Blockfrost API client
 const blockfrost = new BlockFrostAPI({
     projectId: process.env.BLOCKFROST_API_KEY,
-    network: process.env.BLOCKFROST_NETWORK || 'preview',
+    network: process.env.BLOCKFROST_NETWORK || 'preprod',
 });
 
 export const getNFTInfo = async (req, res) => {
