@@ -85,24 +85,24 @@ class ChitChatAgent:
             if "messages" in event and len(event["messages"]) > 0:
                 yield event["messages"][-1].content
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
    
     
-    llm = ChatGroq(
-        temperature=0.7,
-        model="llama-3.1-8b-instant",
-        api_key = os.getenv("GROK_API_KEY")
-    )
+#     llm = ChatGroq(
+#         temperature=0.7,
+#         model="llama-3.1-8b-instant",
+#         api_key = os.getenv("GROK_API_KEY")
+#     )
 
-    chitchat_agent = ChitChatAgent(llm)
+#     chitchat_agent = ChitChatAgent(llm)
     
-    # Test conversation
-    session_id = "test_session_001"
+#     # Test conversation
+#     session_id = "test_session_001"
     
-    print("Bot:", chitchat_agent.invoke("Hôm nay trời đẹp quá!", session_id))
-    print("Bot:", chitchat_agent.invoke("hôm nay tôi lười học quá", session_id))
-    print("Bot:", chitchat_agent.invoke("heloo bạn tư vấn khóa học phải không", session_id))
+#     print("Bot:", chitchat_agent.invoke("Hôm nay trời đẹp quá!", session_id))
+#     print("Bot:", chitchat_agent.invoke("hôm nay tôi lười học quá", session_id))
+#     print("Bot:", chitchat_agent.invoke("heloo bạn tư vấn khóa học phải không", session_id))
 
-    print("\nStreaming response:")
-    for chunk in chitchat_agent.stream("Có áo khoác nào trendy không?", session_id):
-        print(chunk, end="", flush=True)
+#     print("\nStreaming response:")
+#     for chunk in chitchat_agent.stream("Có áo khoác nào trendy không?", session_id):
+#         print(chunk, end="", flush=True)

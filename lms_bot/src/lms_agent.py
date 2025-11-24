@@ -6,13 +6,13 @@ from langgraph.prebuilt import ToolNode
 from src.tool.product_search import course_search_tool
 from src.tool.policy_search import policy_search_tool
 from langchain_groq import ChatGroq
-
 import os 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
-class ShoppingAgent:
+class LMSAgent:
     def __init__(self, llm, max_tokens: int = 2000, verbose: bool = False):
         """
         Agent with 2 tools:
@@ -24,14 +24,12 @@ class ShoppingAgent:
         self.verbose = verbose
 
         self.tools = [course_search_tool, policy_search_tool]
-        
-        # ✅ FIX: Không dùng tool_choice, để model tự quyết định
+
         self.llm_with_tools = llm.bind_tools(self.tools)
 
         self.graph = self._build_graph()
 
     def _build_graph(self):
-        # ✅ FIX: System prompt rõ ràng hơn, hướng dẫn cách dùng tool
         system_prompt = (
             "Bạn là trợ lý AI thông minh cho nền tảng học trực tuyến LMS.\n"
             "Nhiệm vụ của bạn là trả lời câu hỏi của người dùng về khóa học và chính sách.\n\n"
@@ -75,7 +73,7 @@ class ShoppingAgent:
                 if self.verbose:
                     print(f"\n[Agent ERROR] {type(e).__name__}: {str(e)}")
                 
-                # Trả về error message thay vì crash
+
                 error_response = AIMessage(
                     content=f"Xin lỗi, đã xảy ra lỗi khi xử lý yêu cầu của bạn. Vui lòng thử lại."
                 )
@@ -147,14 +145,14 @@ if __name__ == "__main__":
         api_key=os.getenv("GROK_API_KEY")
     )
 
-    shopping_agent = ShoppingAgent(llm, verbose=True)
+    lms_agent = LMSAgent(llm, verbose=True)
     session_id = "session_demo_001"
 
     # Test 1: Tìm khóa học
     print("\n" + "🎯" * 30)
     print("TEST 1: Tìm khóa học Python")
     print("🎯" * 30)
-    response1 = shopping_agent.invoke(
+    response1 = lms_agent.invoke(
         "Tôi muốn tìm khóa học về lập trình Python cơ bản.",
         session_id
     )
@@ -163,7 +161,7 @@ if __name__ == "__main__":
     print("\n" + "🎯" * 30)
     print("TEST 2: Hỏi về chính sách")
     print("🎯" * 30)
-    response2 = shopping_agent.invoke(
+    response2 = lms_agent.invoke(
         "Làm sao để tạo tài khoản học viên mới?",
         session_id
     )
@@ -172,7 +170,7 @@ if __name__ == "__main__":
     print("\n" + "🎯" * 30)
     print("TEST 3: Câu hỏi nối tiếp")
     print("🎯" * 30)
-    response3 = shopping_agent.invoke(
+    response3 = lms_agent.invoke(
         "Ngoài Python thì có khóa học nào về Java không?",
         session_id
     )

@@ -8,8 +8,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 import json
 
 
-FAQ_FILE_PATH = r"D:\Model\LMS\data\policy.txt"
-FAISS_DB_PATH = r"D:\Model\LMS\data\vectorstores"
+FAQ_FILE_PATH = r"D:\Model\lms_bot\data\policy.txt"
+FAISS_DB_PATH = r"D:\Model\lms_bot\data\vectorstores"
 
 
 def load_faq_data(file_path: str):
