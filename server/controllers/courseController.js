@@ -84,6 +84,19 @@ export const getCourseId = async (req, res) => {
             }
         }
 
+        // Fill missing payment info from educator profile for display
+        if (!courseData.creatorAddress && courseData.educator && courseData.educator.walletAddress) {
+            courseData.creatorAddress = courseData.educator.walletAddress;
+        }
+        if (!courseData.paypalEmail && courseData.educator && courseData.educator.paypalEmail) {
+            courseData.paypalEmail = courseData.educator.paypalEmail;
+        }
+        courseData.paymentMethods = {
+            ada: !!courseData.creatorAddress,
+            stripe: courseData.paymentMethods && courseData.paymentMethods.stripe ? true : false,
+            paypal: !!courseData.paypalEmail
+        };
+
         // Mask lecture URLs for unpurchased courses
         if (courseData.courseContent) {
             courseData.courseContent.forEach(chapter => {

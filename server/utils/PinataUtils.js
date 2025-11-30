@@ -7,7 +7,25 @@ import { Readable } from 'stream';
 dotenv.config();
 
 // Initialize Pinata with JWT
-const pinata = new pinataSDK({ pinataJWTKey: process.env.PINATA_JWT });
+let { PINATA_JWT } = process.env;
+if (!PINATA_JWT || typeof PINATA_JWT !== 'string' || PINATA_JWT.trim().length === 0) {
+    console.error('PINATA_JWT is missing or empty. Please set PINATA_JWT in your environment without quotes.');
+}
+// Sanitize common misconfigurations: remove surrounding quotes and accidental 'Bearer ' prefix
+if (PINATA_JWT) {
+    const trimmed = PINATA_JWT.trim();
+    const withoutQuotes = (trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith('\'') && trimmed.endsWith('\''))
+        ? trimmed.slice(1, -1)
+        : trimmed;
+    const withoutBearer = withoutQuotes.startsWith('Bearer ')
+        ? withoutQuotes.slice('Bearer '.length)
+        : withoutQuotes;
+    PINATA_JWT = withoutBearer;
+    if (PINATA_JWT.split('.').length < 3) {
+        console.warn('PINATA_JWT does not look like a JWT (missing dot segments). Please verify the token value.');
+    }
+}
+const pinata = new pinataSDK({ pinataJWTKey: PINATA_JWT });
 
 /**
  * Upload content to IPFS via Pinata
@@ -38,7 +56,14 @@ async function uploadToPinata(content, filename) {
         console.log('Upload result:', result);
         return result;
     } catch (error) {
-        console.error('Error uploading to Pinata:', error);
+        const status = error?.response?.status;
+        const data = error?.response?.data;
+        const message = error?.message || String(error);
+        console.error('Error uploading to Pinata:', {
+            status,
+            message,
+            details: data || (error?.details || undefined)
+        });
         throw error;
     }
 }

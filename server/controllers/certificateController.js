@@ -54,6 +54,7 @@ export const createNewCertificate = async (req, res) => {
         res.json({ success: true, message: "Certificate has been created and saved successfully" });
 
     } catch (error) {
+        console.log("error with mint nft: ", error.message)
         res.status(500).json({ success: false, message: error.message });
     }
 };

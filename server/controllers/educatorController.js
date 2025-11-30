@@ -44,10 +44,19 @@ export const addCourse = async (req, res) => {
 
         const parsedCourseData = await JSON.parse(courseData);
         parsedCourseData.educator = educatorId;
-        // Nếu có paypalEmail, cập nhật vào User
+        if (!parsedCourseData.creatorAddress && user.walletAddress) {
+            parsedCourseData.creatorAddress = user.walletAddress;
+        }
         if (parsedCourseData.paypalEmail) {
             await User.findByIdAndUpdate(educatorId, { paypalEmail: parsedCourseData.paypalEmail });
+        } else if (user.paypalEmail) {
+            parsedCourseData.paypalEmail = user.paypalEmail;
         }
+        parsedCourseData.paymentMethods = {
+            ada: !!parsedCourseData.creatorAddress,
+            stripe: false,
+            paypal: !!parsedCourseData.paypalEmail
+        };
         const newCourse = await Course.create(parsedCourseData);
 
         // Tạo stream từ buffer và upload lên Cloudinary
@@ -164,6 +173,7 @@ export const updateCourse = async (req, res) => {
         const educatorId = req.auth.userId;
         const { courseId, courseData } = req.body;
         const imageFile = req.file;
+        const user = await User.findById(educatorId);
 
         // Log dữ liệu nhận được
         console.log("Received data:", { courseId, courseData, imageFile });
@@ -205,6 +215,20 @@ export const updateCourse = async (req, res) => {
 
         // Cập nhật dữ liệu khóa học
         Object.assign(course, parsedCourseData);
+        if (parsedCourseData && parsedCourseData.paypalEmail) {
+            await User.findByIdAndUpdate(educatorId, { paypalEmail: parsedCourseData.paypalEmail });
+        }
+        if (!course.creatorAddress && user && user.walletAddress) {
+            course.creatorAddress = user.walletAddress;
+        }
+        if (!course.paypalEmail && user && user.paypalEmail) {
+            course.paypalEmail = user.paypalEmail;
+        }
+        course.paymentMethods = {
+            ada: !!course.creatorAddress,
+            stripe: course.paymentMethods && course.paymentMethods.stripe ? true : false,
+            paypal: !!course.paypalEmail
+        };
         
         // Đánh dấu khóa học đã được cập nhật
         course.isUpdated = true;
