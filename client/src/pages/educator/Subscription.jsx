@@ -7,8 +7,8 @@ import { toast } from 'react-toastify';
 const ADA_ADDRESS = 'addr_test1qqcc0nggvw9ctfvjwj3ksssvufflhmwymh7uaw8cnjlfxj4gw7ql85e7m6yzdn2ssncqdpf7xfm96k386vdc5xp5g75q7uhvay';
 const PAYPAL_EMAIL = 'sb-huutl40684105@business.example.com';
 const PLANS = [
-  { id: 'monthly', label: '2 minutes', ada: 200, usd: 400, period: '2 minutes' },
-  { id: 'yearly', label: '5 hours', ada: 300, usd: 600, period: '5 hours' }
+  { id: 'monthly', label: '1 month', ada: 20, usd: 400, period: '1 month' },
+  { id: 'yearly', label: '1 year', ada: 240, usd: 600, period: '1 year' }
 ];
 
 export default function Subscription() {
