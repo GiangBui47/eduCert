@@ -16,7 +16,7 @@ console.log('PAYPAL ENV:', {
     client_secret: process.env.PAYPAL_CLIENT_SECRET
 });
 
-const PREMIUM_ADA_ADDRESS = 'addr_test1qqcc0nggvw9ctfvjwj3ksssvufflhmwymh7uaw8cnjlfxj4gw7ql85e7m6yzdn2ssncqdpf7xfm96k386vdc5xp5g75q7uhvay';
+const PREMIUM_ADA_ADDRESS = 'addr_test1qr5wzfm3h2nzq3mthkj7kwgu8ea85h5w2p8...9paunetgevcc6nmgu8ycu98776ys9tqzj0lrq0qq0wdsd';
 const PREMIUM_PAYPAL_EMAIL = 'sb-huutl40684105@business.example.com';
 
 export const paymentPremiumByAda = async (req, res) => {
@@ -40,9 +40,9 @@ export const paymentPremiumByAda = async (req, res) => {
         if (user) {
             user.premiumPlan = plan;
             if (plan === 'yearly') {
-                user.premiumExpiry = new Date(Date.now() + 5 * 60 * 60 * 1000); // 5 hours
+                user.premiumExpiry = new Date(Date.now() + 365 *24 * 60 * 60 * 1000); // 5 hours
             } else {
-                user.premiumExpiry = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes
+                user.premiumExpiry = new Date(Date.now() + 30 * 60 * 60 * 1000); // 2 minutes
             }
             await user.save();
         }
