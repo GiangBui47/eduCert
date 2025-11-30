@@ -2,6 +2,7 @@ import { sendAda } from "../utils/BlockchainUtils.js";
 import paypal from 'paypal-rest-sdk';
 import User from "../models/User.js";
 import PremiumTransaction from "../models/PremiumTransaction.js";
+import PremiumSettings from "../models/PremiumSettings.js";
 
 // Configure PayPal
 paypal.configure({
@@ -19,13 +20,23 @@ console.log('PAYPAL ENV:', {
 const PREMIUM_ADA_ADDRESS = 'addr_test1qr5wzfm3h2nzq3mthkj7kwgu8ea85h5w2p8...9paunetgevcc6nmgu8ycu98776ys9tqzj0lrq0qq0wdsd';
 const PREMIUM_PAYPAL_EMAIL = 'sb-huutl40684105@business.example.com';
 
+async function getPremiumReceiver() {
+    const s = await PremiumSettings.findOne().sort({ updatedAt: -1 }).lean();
+    return {
+        adaAddress: s?.adaAddress || process.env.PREMIUM_ADA_ADDRESS || PREMIUM_ADA_ADDRESS,
+        paypalEmail: s?.paypalEmail || process.env.PREMIUM_PAYPAL_EMAIL || PREMIUM_PAYPAL_EMAIL,
+    };
+}
+
 export const paymentPremiumByAda = async (req, res) => {
     const { utxos, changeAddress, value, userId, plan } = req.body;
     try {
-        const unsignedTx = await sendAda(utxos, changeAddress, PREMIUM_ADA_ADDRESS, value);
+        const { adaAddress } = await getPremiumReceiver();
+        const unsignedTx = await sendAda(utxos, changeAddress, adaAddress, value);
         if (!unsignedTx) {
             return res.status(500).json({ success: false, message: "Error creating transaction" });
         }
+
         await PremiumTransaction.create({
             user: userId,
             amount: value / 1e6,
@@ -58,6 +69,7 @@ export const paymentPremiumByPaypal = async (req, res) => {
     try {
         // Ensure price is a string
         const priceStr = usdPrice.toString();
+        const { paypalEmail } = await getPremiumReceiver();
         
         const payment = {
             intent: "sale",
@@ -67,7 +79,7 @@ export const paymentPremiumByPaypal = async (req, res) => {
                 cancel_url: `${req.protocol}://${req.get('host')}/api/premium/paypal-cancel`
             },
             transactions: [{
-                payee: { email: PREMIUM_PAYPAL_EMAIL },
+                payee: { email: paypalEmail },
                 item_list: {
                     items: [{
                         name: `Premium Plan: ${plan}`,
@@ -139,7 +151,7 @@ export const paypalSuccess = async (req, res) => {
         const transaction = await PremiumTransaction.findOneAndUpdate(
             { user: userId, plan, status: 'pending' },
             { 
-                status: 'completed',
+                status: 'success',
                 note: `Premium plan: ${plan} - Payment completed`
             },
             { new: true }
