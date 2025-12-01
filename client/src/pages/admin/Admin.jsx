@@ -34,9 +34,6 @@ const Admin = () => {
   const [txPageSize, setTxPageSize] = useState(20);
   const [txFilter, setTxFilter] = useState({ status: '', plan: '', method: '', currency: '', user: '', from: '', to: '' });
 
-  // Premium Summary
-  const [summaryLoading, setSummaryLoading] = useState(false);
-  const [summary, setSummary] = useState({ byMethod: [], byCurrency: [], last7d: [] });
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -131,35 +128,13 @@ const Admin = () => {
     }
   };
 
-  const fetchSummary = async () => {
-    try {
-      setSummaryLoading(true);
-      const token = await getToken();
-      const { data } = await axios.get(`${backendUrl}/api/admin/premium/summary`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (data.success) {
-        setSummary({
-          byMethod: data.byMethod || [],
-          byCurrency: data.byCurrency || [],
-          last7d: data.last7d || []
-        });
-      } else {
-        toast.error(data.message);
-      }
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setSummaryLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (!isAdmin) return;
     if (activeTab === 'users') fetchUsers();
-    if (activeTab === 'premium-settings') fetchPremiumSettings();
-    if (activeTab === 'premium-transactions') fetchTransactions(1, txPageSize);
-    if (activeTab === 'premium-summary') fetchSummary();
+    if (activeTab === 'premium') {
+      fetchPremiumSettings();
+      fetchTransactions(1, txPageSize);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, activeTab]);
 
@@ -211,9 +186,7 @@ const Admin = () => {
       <div className="flex gap-2 mb-6">
         {[
           { key: 'users', label: 'Users' },
-          { key: 'premium-settings', label: 'Premium Settings' },
-          { key: 'premium-transactions', label: 'Premium Transactions' },
-          { key: 'premium-summary', label: 'Premium Summary' },
+          { key: 'premium', label: 'Premium' },
         ].map(t => (
           <button
             key={t.key}
@@ -328,7 +301,7 @@ const Admin = () => {
         </>
       )}
 
-      {activeTab === 'premium-settings' && (
+      {activeTab === 'premium' && (
         <div className="max-w-xl">
           {loadingSettings ? (
             <div>Loading...</div>
@@ -358,8 +331,8 @@ const Admin = () => {
         </div>
       )}
 
-      {activeTab === 'premium-transactions' && (
-        <div className="space-y-4">
+      {activeTab === 'premium' && (
+        <div className="space-y-4 mt-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <select className="border rounded px-2 py-2" value={txFilter.status} onChange={(e)=>setTxFilter(f=>({...f,status:e.target.value}))}>
               <option value="">Status</option>
@@ -438,94 +411,7 @@ const Admin = () => {
         </div>
       )}
 
-      {activeTab === 'premium-summary' && (
-        <div className="space-y-6">
-          {summaryLoading ? (
-            <div>Loading...</div>
-          ) : (
-            <>
-              <div>
-                <h2 className="text-lg font-medium mb-2">By Method</h2>
-                <table className="min-w-full border">
-                  <thead>
-                    <tr className="bg-gray-50 text-left">
-                      <th className="p-2 border">Method</th>
-                      <th className="p-2 border">Status</th>
-                      <th className="p-2 border">Count</th>
-                      <th className="p-2 border">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {summary.byMethod.map((r, idx) => (
-                      <tr key={idx} className="border-t">
-                        <td className="p-2 border">{r._id?.method}</td>
-                        <td className="p-2 border">{r._id?.status}</td>
-                        <td className="p-2 border">{r.count}</td>
-                        <td className="p-2 border">{r.amount}</td>
-                      </tr>
-                    ))}
-                    {summary.byMethod.length === 0 && (
-                      <tr><td colSpan="4" className="p-4 text-center text-gray-500">No data</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <div>
-                <h2 className="text-lg font-medium mb-2">By Currency</h2>
-                <table className="min-w-full border">
-                  <thead>
-                    <tr className="bg-gray-50 text-left">
-                      <th className="p-2 border">Currency</th>
-                      <th className="p-2 border">Status</th>
-                      <th className="p-2 border">Count</th>
-                      <th className="p-2 border">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {summary.byCurrency.map((r, idx) => (
-                      <tr key={idx} className="border-t">
-                        <td className="p-2 border">{r._id?.currency}</td>
-                        <td className="p-2 border">{r._id?.status}</td>
-                        <td className="p-2 border">{r.count}</td>
-                        <td className="p-2 border">{r.amount}</td>
-                      </tr>
-                    ))}
-                    {summary.byCurrency.length === 0 && (
-                      <tr><td colSpan="4" className="p-4 text-center text-gray-500">No data</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <div>
-                <h2 className="text-lg font-medium mb-2">Last 7 days</h2>
-                <table className="min-w-full border">
-                  <thead>
-                    <tr className="bg-gray-50 text-left">
-                      <th className="p-2 border">Day</th>
-                      <th className="p-2 border">Count</th>
-                      <th className="p-2 border">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {summary.last7d.map((r, idx) => (
-                      <tr key={idx} className="border-t">
-                        <td className="p-2 border">{r._id?.day}</td>
-                        <td className="p-2 border">{r.count}</td>
-                        <td className="p-2 border">{r.amount}</td>
-                      </tr>
-                    ))}
-                    {summary.last7d.length === 0 && (
-                      <tr><td colSpan="3" className="p-4 text-center text-gray-500">No data</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
-        </div>
-      )}
+      
     </div>
   );
 };
