@@ -47,6 +47,7 @@ const Player = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [alreadyFeedback, setAlreadyFeedback] = useState(false);
   const [qnaOpen, setQnaOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const testContainerRef = useRef(null);
   const courseDataCache = useRef(null);
 
@@ -1066,8 +1067,57 @@ const Player = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col-reverse md:grid md:grid-cols-2 gap-10">
-          <div className="text-gray-800">
+        <div className="flex justify-end mb-3">
+          <button
+            onClick={() => setSidebarOpen((s) => !s)}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50"
+          >
+            {sidebarOpen ? 'Hide details' : 'Show details'}
+          </button>
+        </div>
+        <div className="flex flex-col md:flex-row gap-6">
+
+          <div className="flex-1 md:mt-10 order-1 md:order-1">
+            {playerData ? (
+              <div>
+                <YouTube
+                  videoId={playerData.lectureUrl.split('/').pop()}
+                  opts={{
+                    width: '100%',
+                    height: '100%',
+                    playerVars: {
+                      autoplay: 0,
+                      controls: 1,
+                      playsinline: 1,
+                      mute: 0,
+                    },
+                  }}
+                  iframeClassName="w-full aspect-video"
+                />
+                <div className="flex justify-between items-center mt-1">
+                  <p>
+                    {playerData.chapter}.{playerData.lecture}. {playerData.lectureTitle}
+                  </p>
+                  <button
+                    className={`${
+                      progressData?.lectureCompleted.includes(playerData.lectureId)
+                        ? 'text-gray-500 cursor-not-allowed'
+                        : 'text-blue-600 hover:text-blue-700'
+                    }`}
+                    onClick={() => markLectureAsCompleted(playerData.lectureId)}
+                    disabled={progressData?.lectureCompleted.includes(playerData.lectureId)}
+                  >
+                    {progressData?.lectureCompleted.includes(playerData.lectureId) ? 'Completed' : 'Mark Complete'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <img src={courseData.courseThumbnail} alt="Course Thumbnail" className="w-full aspect-video object-cover" />
+            )}
+            <Certificate />
+          </div>
+
+          <div className={`text-gray-800 order-2 md:order-2 ${sidebarOpen ? 'block md:w-96' : 'hidden'}`}>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 flex items-center gap-2">
               <div className="w-1.5 h-8 bg-blue-600 rounded-full mr-2"></div>
               Course Structure
@@ -1374,48 +1424,6 @@ const Player = () => {
             </div>
           </div>
 
-          <div className="md:mt-10">
-            {playerData ? (
-              <div>
-                <YouTube
-                  videoId={playerData.lectureUrl.split('/').pop()}
-                  opts={{
-                    width: '100%',
-                    height: '100%',
-                    playerVars: {
-                      autoplay: 0,
-                      controls: 1,
-                      playsinline: 1,
-                      mute: 0,
-                    },
-                  }}
-                  iframeClassName="w-full aspect-video"
-                />
-                <div className="flex justify-between items-center mt-1">
-                  <p>
-                    {playerData.chapter}.{playerData.lecture}. {playerData.lectureTitle}
-                  </p>
-                  <button
-                    className={`${
-                      progressData?.lectureCompleted.includes(playerData.lectureId)
-                        ? 'text-gray-500 cursor-not-allowed'
-                        : 'text-blue-600 hover:text-blue-700'
-                    }`}
-                    onClick={() => markLectureAsCompleted(playerData.lectureId)}
-                    disabled={progressData?.lectureCompleted.includes(playerData.lectureId)}
-                  >
-                    {progressData?.lectureCompleted.includes(playerData.lectureId) ? 'Completed' : 'Mark Complete'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <img src={courseData.courseThumbnail} alt="Course Thumbnail" className="w-full aspect-video object-cover" />
-            )}
-            <Certificate />
-          </div>
-        </div>
-      </div>
-
       {/* Floating Q&A button */}
       <button
         type="button"
@@ -1489,6 +1497,8 @@ const Player = () => {
           formatTime={formatTime}
         />
       )}
+    </div>
+    </div>
     </div>
   );
 };
