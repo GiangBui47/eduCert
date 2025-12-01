@@ -90,8 +90,8 @@ const QnaSection = ({ courseId, lectureId, canPost }) => {
   }, [courseId, lectureId]);
 
   const submitQuestion = async () => {
-    if (!isLoggedIn) return toast.info('Vui lòng đăng nhập để đăng bình luận');
-    if (!canPost) return toast.info('Bạn cần tham gia khóa học để đăng bình luận');
+    if (!isLoggedIn) return toast.info('Please sign in to post a comment');
+    if (!canPost) return toast.info('You must enroll in this course to comment');
     if (!questionText.trim()) return;
     try {
       const token = await getToken();
@@ -101,22 +101,22 @@ const QnaSection = ({ courseId, lectureId, canPost }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
-        toast.success('Đã đăng bình luận');
+        toast.success('Comment posted');
         setQuestionText('');
         setItems(prev => [data.question, ...prev]);
         setTotal(prev => prev + 1);
       } else {
-        toast.error(data.message || 'Đăng bình luận thất bại');
+        toast.error(data.message || 'Failed to post comment');
       }
     } catch (e) {
-      toast.error(e.response?.data?.message || e.message || 'Đăng bình luận thất bại');
+      toast.error(e.response?.data?.message || e.message || 'Failed to post comment');
     }
   };
 
   const submitAnswer = async (questionId) => {
     const content = (replyDrafts[questionId] || '').trim();
-    if (!isLoggedIn) return toast.info('Vui lòng đăng nhập để phản hồi');
-    if (!canPost) return toast.info('Bạn cần tham gia khóa học để phản hồi');
+    if (!isLoggedIn) return toast.info('Please sign in to reply');
+    if (!canPost) return toast.info('You must enroll in this course to reply');
     if (!content) return;
     try {
       const token = await getToken();
@@ -130,17 +130,17 @@ const QnaSection = ({ courseId, lectureId, canPost }) => {
         setReplyDrafts(prev => ({ ...prev, [questionId]: '' }));
         setOpenReplyFor(prev => ({ ...prev, [questionId]: false }));
       } else {
-        toast.error(data.message || 'Gửi phản hồi thất bại');
+        toast.error(data.message || 'Failed to send reply');
       }
     } catch (e) {
-      toast.error(e.response?.data?.message || e.message || 'Gửi phản hồi thất bại');
+      toast.error(e.response?.data?.message || e.message || 'Failed to send reply');
     }
   };
 
   if (!lectureId) {
     return (
       <div className="mt-8">
-        <h2 className="text-xl font-semibold text-black mb-3">Bình luận</h2>
+        <h2 className="text-xl font-semibold text-black mb-3">Comments</h2>
         <p className="text-gray-600 text-sm">Select a lecture to view and post Q&A.</p>
       </div>
     );
@@ -149,34 +149,45 @@ const QnaSection = ({ courseId, lectureId, canPost }) => {
   return (
     <div className="mt-8">
       <div className="bg-white mb-4">
-        <textarea
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Nhập bình luận mới của bạn"
-          value={questionText}
-          onChange={(e) => setQuestionText(e.target.value)}
-          disabled={!canPost}
-        />
-        <div className="flex justify-between items-center mt-2">
-          {!canPost && (
-            <div className="text-xs text-gray-500">Bạn cần tham gia khóa học để đăng bình luận</div>
+        <div className="flex items-start gap-3">
+          {userData?.imageUrl ? (
+            <img src={userData.imageUrl} alt={userData?.name || 'User'} className="w-9 h-9 rounded-full object-cover border" />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-medium text-gray-700">
+              {(userData?.name || 'U').slice(0,2).toUpperCase()}
+            </div>
           )}
-          <button
-            className="px-3 py-1.5 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-            onClick={submitQuestion}
-            disabled={!questionText.trim() || !canPost}
-          >
-            Đăng
-          </button>
+          <div className="flex-1">
+            <textarea
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Write a new comment"
+              value={questionText}
+              onChange={(e) => setQuestionText(e.target.value)}
+              disabled={!canPost}
+            />
+            <div className="flex items-center mt-2">
+              {!canPost && (
+                <div className="text-xs text-gray-500">You must enroll in this course to comment</div>
+              )}
+              <button
+                className="ml-auto px-3 py-1.5 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                onClick={submitQuestion}
+                disabled={!questionText.trim() || !canPost}
+              >
+                Post
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="text-sm text-gray-600 mb-2">{total} bình luận</div>
+      <div className="text-sm text-gray-600 mb-2">{total} comments</div>
 
       {loading ? (
-        <div className="text-gray-500 text-sm">Đang tải...</div>
+        <div className="text-gray-500 text-sm">Loading...</div>
       ) : items.length === 0 ? (
-        <div className="text-gray-600 text-sm">Chưa có bình luận.</div>
+        <div className="text-gray-600 text-sm">No comments yet.</div>
       ) : (
         <div className="space-y-4">
           {items.map(q => (
@@ -197,23 +208,23 @@ const QnaSection = ({ courseId, lectureId, canPost }) => {
                   <div className="text-sm text-gray-800 whitespace-pre-line mt-1">{q.content}</div>
                   <div className="mt-2 flex items-center gap-3 text-xs text-gray-600">
                     <button
-                      className={`px-2 py-1 rounded border ${ (q.likes||[]).includes(userData?._id) ? 'bg-blue-50 border-blue-400 text-blue-700' : 'border-gray-300 hover:bg-gray-50'}`}
+                      className={`text-blue-600 hover:underline ${ (q.likes||[]).includes(userData?._id) ? 'font-semibold' : ''}`}
                       onClick={() => toggleLike(q._id)}
                     >
-                      Thích {Array.isArray(q.likes) ? q.likes.length : 0}
+                      Like {Array.isArray(q.likes) ? q.likes.length : 0}
                     </button>
                     <span>•</span>
-                    <span>{(q.answers?.length || 0)} phản hồi</span>
+                    <span>{(q.answers?.length || 0)} replies</span>
                     <span>•</span>
                     <button
                       className="text-blue-600 hover:underline"
                       onClick={() => {
-                        if (!isLoggedIn) return toast.info('Vui lòng đăng nhập để phản hồi');
-                        if (!canPost) return toast.info('Bạn cần tham gia khóa học để phản hồi');
+                        if (!isLoggedIn) return toast.info('Please sign in to reply');
+                        if (!canPost) return toast.info('You must enroll in this course to reply');
                         setOpenReplyFor(prev => ({ ...prev, [q._id]: !prev[q._id] }));
                       }}
                     >
-                      Phản hồi
+                      Reply
                     </button>
                   </div>
                   <div className="mt-3 space-y-3">
@@ -232,15 +243,16 @@ const QnaSection = ({ courseId, lectureId, canPost }) => {
                             <div className="text-xs text-gray-500">{relTime(a.createdAt)}</div>
                           </div>
                           <div className="mt-0.5 whitespace-pre-line">{a.content}</div>
-                          <div className="mt-2">
+                           <div className="mt-2">
                             <button
-                              className={`px-2 py-1 rounded border text-xs ${ (a.likes||[]).includes(userData?._id) ? 'bg-blue-50 border-blue-400 text-blue-700' : 'border-gray-300 hover:bg-gray-100'}`}
+                              className={`text-xs text-blue-600 hover:underline ${ (a.likes||[]).includes(userData?._id) ? 'font-semibold' : ''}`}
                               onClick={() => toggleLike(q._id, a._id)}
                             >
-                              Thích {Array.isArray(a.likes) ? a.likes.length : 0}
+                              Like {Array.isArray(a.likes) ? a.likes.length : 0}
                             </button>
                           </div>
                         </div>
+                       
                       </div>
                     ))}
 
@@ -259,7 +271,7 @@ const QnaSection = ({ courseId, lectureId, canPost }) => {
                           onClick={() => submitAnswer(q._id)}
                           disabled={!((replyDrafts[q._id] || '').trim()) || !canPost}
                         >
-                          Gửi
+                          Send
                         </button>
                       </div>
                     )}
