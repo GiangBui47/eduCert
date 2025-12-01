@@ -6,6 +6,7 @@ const answerSchema = new mongoose.Schema(
     authorId: { type: String, required: true },
     authorName: { type: String },
     authorAvatar: { type: String },
+    likes: [{ type: String }],
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
@@ -19,6 +20,7 @@ const qnaQuestionSchema = new mongoose.Schema(
     authorName: { type: String },
     authorAvatar: { type: String },
     answers: [answerSchema],
+    likes: [{ type: String }],
   },
   { timestamps: true }
 );
