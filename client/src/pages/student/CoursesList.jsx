@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { AppContext } from '../../context/AppContext';
 import { useSearchParams } from 'react-router-dom';
 import CourseCard from '../../components/student/CourseCard';
@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 const CoursesList = () => {
   const { backendUrl, getToken } = useContext(AppContext);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [allCourses, setAllCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,7 +49,7 @@ const CoursesList = () => {
     return tempCourses;
   };
 
-  const fetchLatestCourses = async (isFirstLoad = false) => {
+  const fetchLatestCourses = useCallback(async (isFirstLoad = false) => {
     try {
       setLoading(true);
       const token = await getToken();
@@ -57,9 +58,8 @@ const CoursesList = () => {
       });
 
       if (data.success) {
-        const filtered = filterCourses(data.courses);
         if (isFirstLoad) setCurrentPage(1);
-        setFilteredCourses(filtered);
+        setAllCourses(data.courses || []);
       } else {
         toast.error(data.message);
       }
@@ -68,24 +68,27 @@ const CoursesList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [backendUrl, getToken]);
 
-  const handleVisibilityChange = () => {
+  const handleVisibilityChange = useCallback(() => {
     if (!document.hidden) fetchLatestCourses(false);
-  };
+  }, [fetchLatestCourses]);
 
   useEffect(() => {
     setShowNewest(newestFromUrl);
     fetchLatestCourses(true);
-
-    const intervalId = setInterval(() => fetchLatestCourses(false), 2000);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
     return () => {
-      clearInterval(intervalId);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []); // Removed dependencies since polling handles updates
+  }, [newestFromUrl, fetchLatestCourses, handleVisibilityChange]);
+
+  useEffect(() => {
+    const filtered = filterCourses(allCourses);
+    setFilteredCourses(filtered);
+    setCurrentPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, chainType, showNewest, allCourses]);
 
   const toggleShowNewest = () => {
     const newParams = new URLSearchParams(searchParams);
