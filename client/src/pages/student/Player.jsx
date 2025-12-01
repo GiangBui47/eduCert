@@ -6,10 +6,10 @@ import humanizeDuration from 'humanize-duration';
 import YouTube from 'react-youtube';
 import Rating from '../../components/student/Rating';
 import Loading from '../../components/student/Loading';
-import Certificate from '../../components/student/Certificate';
 import QnaModal from '../../components/student/QnaModal';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+
 import TestManager from './TestManager.jsx';
 
 let globalIsBlocked = false;
@@ -1066,43 +1066,49 @@ const Player = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className={`mx-auto ${sidebarOpen ? 'max-w-7xl' : 'max-w-6xl'}`}>
         <div className="flex justify-end mb-3">
           <button
             onClick={() => setSidebarOpen((s) => !s)}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50"
+            className={`px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50`}
           >
             {sidebarOpen ? 'Hide details' : 'Show details'}
           </button>
         </div>
         <div className="flex flex-col md:flex-row gap-6">
 
-          <div className="flex-1 md:mt-10 order-1 md:order-1">
+          <div className={`flex-1  order-1 md:order-1 ${!sidebarOpen ? 'md:max-w-3xl lg:max-w-4xl mx-auto' : ''} `}>
+    
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-5 flex items-center gap-2">
+              <div className="w-1.5 h-8 bg-blue-600 rounded-full mr-2"></div>
+              {courseData?.courseTitle}
+            </h2>
             {playerData ? (
               <div>
-                <YouTube
-                  videoId={playerData.lectureUrl.split('/').pop()}
-                  opts={{
-                    width: '100%',
-                    height: '100%',
-                    playerVars: {
-                      autoplay: 0,
-                      controls: 1,
-                      playsinline: 1,
-                      mute: 0,
-                    },
-                  }}
-                  iframeClassName="w-full aspect-video"
-                />
-                <div className="flex justify-between items-center mt-1">
+                <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-white mb-3 md:mb-4">
+                  <YouTube
+                    videoId={playerData.lectureUrl.split('/').pop()}
+                    opts={{
+                      width: '100%',
+                      height: '100%',
+                      playerVars: {
+                        autoplay: 0,
+                        controls: 1,
+                        playsinline: 1,
+                        mute: 0,
+                      },
+                    }}
+                    iframeClassName="w-full aspect-video"
+                  />
+                </div>
+                <div className="flex justify-between items-center mt-2 md:mt-3">
                   <p>
                     {playerData.chapter}.{playerData.lecture}. {playerData.lectureTitle}
                   </p>
                   <button
-                    className={`${
-                      progressData?.lectureCompleted.includes(playerData.lectureId)
-                        ? 'text-gray-500 cursor-not-allowed'
-                        : 'text-blue-600 hover:text-blue-700'
+                    className={`${progressData?.lectureCompleted.includes(playerData.lectureId)
+                      ? 'text-gray-500 cursor-not-allowed'
+                      : 'text-blue-600 hover:text-blue-700'
                     }`}
                     onClick={() => markLectureAsCompleted(playerData.lectureId)}
                     disabled={progressData?.lectureCompleted.includes(playerData.lectureId)}
@@ -1114,7 +1120,21 @@ const Player = () => {
             ) : (
               <img src={courseData.courseThumbnail} alt="Course Thumbnail" className="w-full aspect-video object-cover" />
             )}
-            <Certificate />
+
+            {playerData && (
+              <div className="mt-6 md:mt-8 border border-gray-200 rounded-xl bg-white p-5 md:p-6 shadow-sm">
+                <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-2">{playerData?.lectureTitle}</h3>
+                <div className="text-sm md:text-base text-gray-700">
+                  {playerData?.lectureDescription ? (
+                    <div className="whitespace-pre-line">{playerData.lectureDescription}</div>
+                  ) : (
+                    <p className="text-gray-500 italic">No description for this lecture.</p>
+                  )}
+                </div>
+                <div className="mt-3 text-xs md:text-sm text-gray-500">Powered by LMS UTC</div>
+              </div>
+            )}
+
           </div>
 
           <div className={`text-gray-800 order-2 md:order-2 ${sidebarOpen ? 'block md:w-96' : 'hidden'}`}>
