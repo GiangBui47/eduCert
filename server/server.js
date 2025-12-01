@@ -18,6 +18,7 @@ import batchMintRouter from './routes/batchMintRoutes.js'
 import purchaseRouter from './routes/purchaseRoutes.js'
 import violationRouter from './routes/violationRoutes.js'
 import violationNFTRouter from './routes/violationNFTRoutes.js'
+import qnaRouter from './routes/qnaRoutes.js'
 import violationCounterRouter from './routes/violationCounterRoutes.js'
 import profileRouter from './routes/profileRoutes.js'
 import adminRouter from './routes/adminRoutes.js'
@@ -162,6 +163,8 @@ app.use('/api/violation-nft', express.json(), violationNFTRouter)
 app.use('/api/violation-counter', express.json(), violationCounterRouter)
 
 app.use('/api/purchase', express.json(), purchaseRouter)
+
+app.use('/api/qna', express.json(), qnaRouter)
 
 
 app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebhooks)

@@ -7,6 +7,7 @@ import YouTube from 'react-youtube';
 import Rating from '../../components/student/Rating';
 import Loading from '../../components/student/Loading';
 import Certificate from '../../components/student/Certificate';
+import QnaModal from '../../components/student/QnaModal';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import TestManager from './TestManager.jsx';
@@ -45,6 +46,7 @@ const Player = () => {
   const [studentId, setStudentId] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [alreadyFeedback, setAlreadyFeedback] = useState(false);
+  const [qnaOpen, setQnaOpen] = useState(false);
   const testContainerRef = useRef(null);
   const courseDataCache = useRef(null);
 
@@ -1248,7 +1250,7 @@ const Player = () => {
                                 fill="currentColor"
                                 aria-hidden="true"
                               >
-                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                                <path d="M9 4.804A7.968 7.968 0 013.75 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
                               </svg>
                             )}
                             <div className="flex items-center justify-between w-full">
@@ -1413,6 +1415,26 @@ const Player = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating Q&A button */}
+      <button
+        type="button"
+        onClick={() => setQnaOpen(true)}
+        className="fixed bottom-6 right-6 z-40 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 p-3"
+        title="Open Q&A"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+          <path d="M1.5 6.75A2.25 2.25 0 013.75 4.5h16.5a2.25 2.25 0 012.25 2.25v8.25a2.25 2.25 0 01-2.25 2.25H8.31l-3.76 3.008A.75.75 0 013 19.85V17.25H3.75A2.25 2.25 0 011.5 15V6.75z" />
+        </svg>
+      </button>
+
+      {/* Q&A Modal */}
+      <QnaModal
+        open={qnaOpen}
+        onClose={() => setQnaOpen(false)}
+        courseId={courseId}
+        lectureId={playerData?.lectureId}
+      />
 
       {showViolationImage && violationImage && (
         <div className="fixed bottom-4 right-4 z-50 bg-white rounded-lg shadow-lg border-2 border-red-500 overflow-hidden w-64">
