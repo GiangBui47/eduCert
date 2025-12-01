@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+
 import { dummyStudentEnrolled } from '../../assets/assets';
 import Loading from '../../components/student/Loading';
 import { AppContext } from '../../context/AppContext';
@@ -12,11 +13,19 @@ const StudentsEnrolled = () => {
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  const [courses, setCourses] = useState([]);
+  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [emailTerm, setEmailTerm] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const fetchEnrolledStudents = async (isFirstLoad = false) => {
+  const fetchEnrolledStudents = useCallback(async (isFirstLoad = false) => {
     try {
       const token = await getToken();
-      const { data } = await axios.get(`${backendUrl}/api/educator/enrolled-students`, {
+      const url = `${backendUrl}/api/educator/enrolled-students${selectedCourseId ? `?courseId=${selectedCourseId}` : ''}`;
+      const { data } = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (data.success) {
@@ -48,22 +57,34 @@ const StudentsEnrolled = () => {
     } catch (error) {
       toast.error(error.message);
     }
-  };
+  }, [backendUrl, getToken, selectedCourseId]);
 
-  const handleVisibilityChange = () => {
-    if (!document.hidden && isEducator) fetchEnrolledStudents(false);
-  };
+  const fetchCourses = useCallback(async () => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.get(`${backendUrl}/api/educator/courses`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (data.success) {
+        setCourses(Array.isArray(data.courses) ? data.courses : []);
+      }
+    } catch {}
+  }, [backendUrl, getToken]);
 
   useEffect(() => {
     if (!isEducator) return;
     fetchEnrolledStudents(true);
+    fetchCourses();
     const intervalId = setInterval(() => fetchEnrolledStudents(false), 2000);
+    const handleVisibilityChange = () => {
+      if (!document.hidden && isEducator) fetchEnrolledStudents(false);
+    };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       clearInterval(intervalId);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isEducator]);
+  }, [isEducator, fetchEnrolledStudents, fetchCourses]);
 
   useEffect(() => {
     if (enrolledStudents) {
@@ -76,6 +97,66 @@ const StudentsEnrolled = () => {
       setFilteredStudents(filtered);
     }
   }, [searchQuery, enrolledStudents]);
+
+  useEffect(() => {
+    if (!isEducator) return;
+    fetchEnrolledStudents(true);
+  }, [selectedCourseId, isEducator, fetchEnrolledStudents]);
+
+  useEffect(() => {
+    let timer;
+    const run = async () => {
+      const q = emailTerm.trim();
+      if (!showModal || q.length < 2) {
+        setSuggestions([]);
+        return;
+      }
+      try {
+        setIsSearching(true);
+        const token = await getToken();
+        const { data } = await axios.get(`${backendUrl}/api/educator/students/search?q=${encodeURIComponent(q)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (data.success) setSuggestions(data.users || []);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+    timer = setTimeout(run, 300);
+    return () => clearTimeout(timer);
+  }, [emailTerm, showModal, backendUrl, getToken]);
+
+  const handleAddStudent = async () => {
+    try {
+      if (!selectedCourseId) {
+        toast.error('Please select a course');
+        return;
+      }
+      const email = emailTerm.trim();
+      if (!email) {
+        toast.error('Please enter student email');
+        return;
+      }
+      setIsAdding(true);
+      const token = await getToken();
+      const { data } = await axios.post(`${backendUrl}/api/educator/courses/${selectedCourseId}/add-student`, { email }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (data.success) {
+        toast.success('Student added');
+        setShowModal(false);
+        setEmailTerm('');
+        setSuggestions([]);
+        fetchEnrolledStudents(true);
+      } else {
+        toast.error(data.message || 'Failed to add student');
+      }
+    } catch (e) {
+      toast.error(e.message);
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -97,27 +178,38 @@ const StudentsEnrolled = () => {
           <p className="text-gray-600 ml-5">Track all students enrolled in your courses</p>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2 text-blue-600">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
               <span className="font-medium">Total: {enrolledStudents.length} students</span>
             </div>
+            <select value={selectedCourseId} onChange={e => setSelectedCourseId(e.target.value)} className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">All courses</option>
+              {courses.map(c => (
+                <option key={c._id} value={c._id}>{c.courseTitle}</option>
+              ))}
+            </select>
           </div>
-          <div className="relative w-full md:w-80">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="relative w-full md:w-80">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Search by course name, user ID or student name..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full shadow-sm"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Search by course name, user ID or student name..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full shadow-sm"
-            />
+            <button onClick={() => setShowModal(true)} disabled={!selectedCourseId} className={`px-4 py-2 rounded-md text-white text-sm ${selectedCourseId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed'}`}>
+              Add student
+            </button>
           </div>
         </div>
         <div className="w-full overflow-hidden rounded-lg shadow-sm bg-white border border-gray-200">
@@ -207,6 +299,47 @@ const StudentsEnrolled = () => {
           )}
         </div>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowModal(false)}></div>
+          <div className="relative bg-white rounded-lg shadow-lg w-11/12 max-w-md p-5">
+            <h3 className="text-lg font-semibold mb-3">Add student to course</h3>
+            <div className="mb-3">
+              <p className="text-sm text-gray-700 mb-1">Course</p>
+              <select disabled className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-gray-100">
+                <option>
+                  {courses.find(c => c._id === selectedCourseId)?.courseTitle || 'Select course'}
+                </option>
+              </select>
+            </div>
+            <div className="mb-3">
+              <p className="text-sm text-gray-700 mb-1">Student email</p>
+              <input type="email" value={emailTerm} onChange={e => setEmailTerm(e.target.value)} placeholder="Enter email" className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <div className="mt-2 max-h-48 overflow-auto border border-gray-200 rounded-md">
+                {isSearching && <div className="px-3 py-2 text-sm text-gray-500">Searching...</div>}
+                {!isSearching && suggestions.map(u => (
+                  <button key={u._id} type="button" onClick={() => setEmailTerm(u.email)} className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50">
+                    <div className="flex items-center gap-2">
+                      <img src={u.imageUrl || dummyStudentEnrolled} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
+                      <div>
+                        <div className="font-medium text-gray-800">{u.name}</div>
+                        <div className="text-gray-500 text-xs">{u.email}</div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+                {!isSearching && suggestions.length === 0 && emailTerm.trim().length >= 2 && (
+                  <div className="px-3 py-2 text-sm text-gray-500">No users found</div>
+                )}
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm">Cancel</button>
+              <button onClick={handleAddStudent} disabled={isAdding || !selectedCourseId} className={`px-4 py-2 rounded-md text-white text-sm ${isAdding || !selectedCourseId ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}>{isAdding ? 'Adding...' : 'Add'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   ) : (
     <Loading />

@@ -5,8 +5,10 @@ import { protectEducator } from '../middlewares/authMiddleware.js'
 import {
     addCourse, deleteCourse, deleteAllCourses, educatorDashboardData,
     getEducatorCourses, getEnrolledStudentsData, updateCourse,
-    updatetoRoleToEducator, educatorDetails, unstopCourse, unstopAllCourses
+    updatetoRoleToEducator, educatorDetails, unstopCourse, unstopAllCourses,
+    addStudentToCourse
 } from '../controllers/educatorController.js';
+import { searchUsersByEmail } from '../controllers/educatorController.js';
 
 const educatorRouter = express.Router()
 
@@ -23,4 +25,6 @@ educatorRouter.delete('/delete-course/:courseId', protectEducator, deleteCourse)
 educatorRouter.delete('/delete-all-courses', protectEducator, deleteAllCourses);
 educatorRouter.put('/unstop-course/:courseId', protectEducator, unstopCourse);
 educatorRouter.put('/unstop-all-courses', protectEducator, unstopAllCourses);
+educatorRouter.get('/students/search', protectEducator, searchUsersByEmail);
+educatorRouter.post('/courses/:courseId/add-student', protectEducator, addStudentToCourse);
 export default educatorRouter;

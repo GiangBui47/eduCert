@@ -25,6 +25,97 @@ export const updatetoRoleToEducator = async (req, res) => {
     }
 };
 
+// Search users by email (for educator to find students)
+export const searchUsersByEmail = async (req, res) => {
+    try {
+        const q = (req.query?.q || '').toString().trim();
+        if (!q || q.length < 2) {
+            return res.json({ success: true, users: [] });
+        }
+        // Escape regex special chars
+        const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(escaped, 'i');
+        const users = await User.find({ email: regex })
+            .select('_id name email imageUrl')
+            .limit(10)
+            .lean();
+        return res.json({ success: true, users });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Educator adds a student to a course by email (manual enrollment)
+export const addStudentToCourse = async (req, res) => {
+    try {
+        const educatorId = req.auth.userId;
+        const { courseId } = req.params;
+        const { email } = req.body || {};
+
+        if (!courseId || !email || !String(email).trim()) {
+            return res.status(400).json({ success: false, message: "courseId and email are required" });
+        }
+
+        const course = await Course.findOne({ _id: courseId, educator: educatorId });
+        if (!course) {
+            return res.status(404).json({ success: false, message: "Course not found or not owned by educator" });
+        }
+
+        const student = await User.findOne({ email: String(email).trim() });
+        if (!student) {
+            return res.status(404).json({ success: false, message: "Student with this email not found" });
+        }
+
+        const studentId = String(student._id);
+        // Disallow educator adding themselves
+        if (studentId === String(educatorId)) {
+            return res.json({ success: false, message: "You cannot add yourself to your own course" });
+        }
+        const alreadyInCourse = Array.isArray(course.enrolledStudents) && course.enrolledStudents.some(id => String(id) === studentId);
+        if (alreadyInCourse) {
+            return res.json({ success: false, message: "Student is already enrolled in this course" });
+        }
+        // Also disallow if there is already a completed purchase (manual or real)
+        const purchased = await Purchase.findOne({ courseId: course._id, userId: studentId, status: 'completed' }).lean();
+        if (purchased) {
+            return res.json({ success: false, message: "Student is already enrolled in this course" });
+        }
+
+        // Add to course.enrolledStudents
+        course.enrolledStudents = Array.isArray(course.enrolledStudents) ? course.enrolledStudents : [];
+        course.enrolledStudents.push(studentId);
+        await course.save();
+
+        // Add to user.enrolledCourses
+        student.enrolledCourses = Array.isArray(student.enrolledCourses) ? student.enrolledCourses : [];
+        const alreadyInUser = student.enrolledCourses.some(cId => String(cId) === String(course._id));
+        if (!alreadyInUser) {
+            student.enrolledCourses.push(course._id);
+            await student.save();
+        }
+
+        // Create a manual zero-amount purchase record for consistency in reporting
+        await Purchase.create({
+            courseId: course._id,
+            userId: studentId,
+            amount: 0,
+            status: 'completed',
+            currency: 'ADA',
+            paymentMethod: 'manual',
+            receiverAddress: course.creatorAddress || 'manual'
+        });
+
+        return res.json({
+            success: true,
+            message: 'Student added to course successfully',
+            student: { _id: studentId, name: student.name, imageUrl: student.imageUrl },
+            course: { _id: String(course._id), courseTitle: course.courseTitle }
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 
 export const addCourse = async (req, res) => {
     try {
@@ -145,10 +236,20 @@ export const getEnrolledStudentsData = async (req, res) => {
     try {
         const educator = req.auth.userId;
         const courses = await Course.find({ educator });
-        const courseIds = courses.map((course) => course._id);
+        const allCourseIds = courses.map((course) => String(course._id));
+
+        // optional filter by courseId
+        const requestedCourseId = req.query?.courseId ? String(req.query.courseId) : null;
+        let filterCourseIds = allCourseIds;
+        if (requestedCourseId) {
+            if (!allCourseIds.includes(requestedCourseId)) {
+                return res.json({ success: false, message: "Invalid courseId or not owned by educator" });
+            }
+            filterCourseIds = [requestedCourseId];
+        }
 
         const purchases = await Purchase.find({
-            courseId: { $in: courseIds },
+            courseId: { $in: filterCourseIds },
             status: "completed",
         })
             .populate("userId", "name imageUrl")
