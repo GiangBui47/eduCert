@@ -89,8 +89,8 @@ const CourseDetails = () => {
         <>
             <div className="relative min-h-screen">
                 <div className="absolute inset-0 bg-gradient-to-b from-blue-50 via-indigo-50/30 to-white"></div>
-                <div className="min-h-screen flex flex-col items-start md:p-8 md:pb-0 p-4 pt-8 pb-0 relative z-10">
-                    <div className="flex md:flex-row flex-col-reverse gap-10 items-start justify-between md:px-8 px-4">
+                <div className="min-h-screen flex flex-col items-center md:p-8 md:pb-0 p-4 pt-8 pb-0 relative z-10">
+                    <div className="flex md:flex-row flex-col-reverse gap-10 items-start justify-between w-full max-w-7xl mx-auto md:px-8 px-4">
                         <div className="z-10 text-gray-500 w-full md:w-2/3">
                             {timeLeft && (
                                 <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
