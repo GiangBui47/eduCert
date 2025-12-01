@@ -192,7 +192,7 @@ const AddCourse = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentChapterId, setCurrentChapterId] = useState(null);
   const [currentTest, setCurrentTest] = useState({ testId: "", chapterNumber: 0, duration: "", passingScore: "" });
-  const [lectureDetails, setLectureDetails] = useState({ lectureTitle: "", lectureDuration: "", lectureUrl: "", isPreviewFree: false });
+  const [lectureDetails, setLectureDetails] = useState({ lectureTitle: "", lectureDuration: "", lectureUrl: "", isPreviewFree: false, lectureDescription: "" });
   const [walletAddress, setWalletAddress] = useState("");
   const [showChapterPopup, setShowChapterPopup] = useState(false);
   const [newChapterTitle, setNewChapterTitle] = useState("");
@@ -228,7 +228,7 @@ const AddCourse = () => {
     const formattedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : "";
     setChapters(chapters.map((chapter) => chapter.chapterId === currentChapterId ? { ...chapter, chapterContent: [...chapter.chapterContent, { ...lectureDetails, lectureUrl: formattedUrl, lectureOrder: chapter.chapterContent.length > 0 ? chapter.chapterContent.slice(-1)[0].lectureOrder + 1 : 1, lectureId: uniqid() }] } : chapter));
     setShowPopup(false);
-    setLectureDetails({ lectureTitle: "", lectureDuration: "", lectureUrl: "", isPreviewFree: false });
+    setLectureDetails({ lectureTitle: "", lectureDuration: "", lectureUrl: "", isPreviewFree: false, lectureDescription: "" });
   };
 
   const handleSubmit = async (e) => {
@@ -417,7 +417,7 @@ const AddCourse = () => {
           </button>
           {!canCreate && cooldownLeft > 0 && (
             <div className="mt-2 text-yellow-700 text-sm font-semibold bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
-              <svg className="w-5 h-5 inline-block mr-1 text-yellow-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
+              <svg className="w-5 h-5 inline-block mr-1 text-yellow-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 11-16 0 8 8 0 0116 0zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
               Wait {Math.floor(cooldownLeft / 60000)}:{((cooldownLeft % 60000) / 1000).toFixed(0).padStart(2, "0")} to create a new course
             </div>
           )}
@@ -428,6 +428,10 @@ const AddCourse = () => {
           <div className="mb-2">
             <p>Lecture Title</p>
             <input type="text" className="mt-1 block w-full border rounded py-1 px-2" value={lectureDetails.lectureTitle} onChange={(e) => setLectureDetails({ ...lectureDetails, lectureTitle: e.target.value })} />
+          </div>
+          <div className="mb-2">
+            <p>Description</p>
+            <textarea rows={4} className="mt-1 block w-full border rounded py-1.5 px-2" value={lectureDetails.lectureDescription} onChange={(e) => setLectureDetails({ ...lectureDetails, lectureDescription: e.target.value })} placeholder="Enter lecture description" />
           </div>
           <div className="mb-2">
             <p>YouTube Video URL</p>
