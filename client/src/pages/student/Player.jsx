@@ -1434,6 +1434,7 @@ const Player = () => {
         onClose={() => setQnaOpen(false)}
         courseId={courseId}
         lectureId={playerData?.lectureId}
+        canPost={Array.isArray(userData?.enrolledCourses) && userData.enrolledCourses.some(c => String(c) === String(courseId))}
       />
 
       {showViolationImage && violationImage && (

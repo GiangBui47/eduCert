@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { AppContext } from '../../context/AppContext';
 
-const QnaSection = ({ courseId, lectureId }) => {
+const QnaSection = ({ courseId, lectureId, canPost }) => {
   const { backendUrl, getToken, userData } = useContext(AppContext);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -12,10 +12,11 @@ const QnaSection = ({ courseId, lectureId }) => {
   const [total, setTotal] = useState(0);
   const [questionText, setQuestionText] = useState('');
   const [replyDrafts, setReplyDrafts] = useState({});
+  const [openReplyFor, setOpenReplyFor] = useState({});
 
-  const canPost = useMemo(() => !!userData?._id, [userData]);
+  const isLoggedIn = useMemo(() => !!userData?._id, [userData]);
 
-  const fetchList = async (p = page) => {
+  const fetchList = async (p = page, append = false) => {
     if (!courseId || !lectureId) return;
     setLoading(true);
     try {
@@ -23,7 +24,11 @@ const QnaSection = ({ courseId, lectureId }) => {
         params: { courseId, lectureId, page: p, limit },
       });
       if (data.success) {
-        setItems(data.items || []);
+        if (append) {
+          setItems(prev => [...prev, ...(data.items || [])]);
+        } else {
+          setItems(data.items || []);
+        }
         setTotal(data.total || 0);
         setPage(data.page || p);
       } else {
@@ -33,6 +38,45 @@ const QnaSection = ({ courseId, lectureId }) => {
       toast.error(e.response?.data?.message || e.message || 'Failed to load Q&A');
     } finally {
       setLoading(false);
+    }
+  };
+  const relTime = (ts) => {
+    try {
+      const t = new Date(ts).getTime();
+      if (!t) return '';
+      const s = Math.floor((Date.now() - t) / 1000);
+      if (s < 60) return `${s}s ago`;
+      const m = Math.floor(s / 60);
+      if (m < 60) return `${m}m ago`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return `${h}h ago`;
+      const d = Math.floor(h / 24);
+      if (d < 30) return `${d}d ago`;
+      const mo = Math.floor(d / 30);
+      if (mo < 12) return `${mo}mo ago`;
+      const y = Math.floor(mo / 12);
+      return `${y}y ago`;
+    } catch {
+      return '';
+    }
+  };
+
+  const toggleLike = async (questionId, answerId) => {
+    if (!isLoggedIn) return toast.info('Please sign in to like');
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        `${backendUrl}/api/qna/like`,
+        { questionId, answerId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (data.success && data.question) {
+        setItems(prev => prev.map(it => (it._id === data.question._id ? data.question : it)));
+      } else {
+        toast.error(data.message || 'Failed to like');
+      }
+    } catch (e) {
+      toast.error(e.response?.data?.message || e.message || 'Failed to like');
     }
   };
 
@@ -46,7 +90,8 @@ const QnaSection = ({ courseId, lectureId }) => {
   }, [courseId, lectureId]);
 
   const submitQuestion = async () => {
-    if (!canPost) return toast.info('Please sign in to ask a question');
+    if (!isLoggedIn) return toast.info('Vui lòng đăng nhập để đăng bình luận');
+    if (!canPost) return toast.info('Bạn cần tham gia khóa học để đăng bình luận');
     if (!questionText.trim()) return;
     try {
       const token = await getToken();
@@ -56,21 +101,22 @@ const QnaSection = ({ courseId, lectureId }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
-        toast.success('Question posted');
+        toast.success('Đã đăng bình luận');
         setQuestionText('');
         setItems(prev => [data.question, ...prev]);
         setTotal(prev => prev + 1);
       } else {
-        toast.error(data.message || 'Failed to post');
+        toast.error(data.message || 'Đăng bình luận thất bại');
       }
     } catch (e) {
-      toast.error(e.response?.data?.message || e.message || 'Failed to post');
+      toast.error(e.response?.data?.message || e.message || 'Đăng bình luận thất bại');
     }
   };
 
   const submitAnswer = async (questionId) => {
     const content = (replyDrafts[questionId] || '').trim();
-    if (!canPost) return toast.info('Please sign in to reply');
+    if (!isLoggedIn) return toast.info('Vui lòng đăng nhập để phản hồi');
+    if (!canPost) return toast.info('Bạn cần tham gia khóa học để phản hồi');
     if (!content) return;
     try {
       const token = await getToken();
@@ -82,18 +128,19 @@ const QnaSection = ({ courseId, lectureId }) => {
       if (data.success && data.question) {
         setItems(prev => prev.map(it => (it._id === questionId ? data.question : it)));
         setReplyDrafts(prev => ({ ...prev, [questionId]: '' }));
+        setOpenReplyFor(prev => ({ ...prev, [questionId]: false }));
       } else {
-        toast.error(data.message || 'Failed to reply');
+        toast.error(data.message || 'Gửi phản hồi thất bại');
       }
     } catch (e) {
-      toast.error(e.response?.data?.message || e.message || 'Failed to reply');
+      toast.error(e.response?.data?.message || e.message || 'Gửi phản hồi thất bại');
     }
   };
 
   if (!lectureId) {
     return (
       <div className="mt-8">
-        <h2 className="text-xl font-semibold text-black mb-3">Q&A</h2>
+        <h2 className="text-xl font-semibold text-black mb-3">Bình luận</h2>
         <p className="text-gray-600 text-sm">Select a lecture to view and post Q&A.</p>
       </div>
     );
@@ -101,31 +148,35 @@ const QnaSection = ({ courseId, lectureId }) => {
 
   return (
     <div className="mt-8">
-      <h2 className="text-xl font-semibold text-black mb-3">Q&A</h2>
-
-      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+      <div className="bg-white mb-4">
         <textarea
           rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Ask a question about this lecture"
+          placeholder="Nhập bình luận mới của bạn"
           value={questionText}
           onChange={(e) => setQuestionText(e.target.value)}
+          disabled={!canPost}
         />
-        <div className="flex justify-end mt-2">
+        <div className="flex justify-between items-center mt-2">
+          {!canPost && (
+            <div className="text-xs text-gray-500">Bạn cần tham gia khóa học để đăng bình luận</div>
+          )}
           <button
             className="px-3 py-1.5 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
             onClick={submitQuestion}
-            disabled={!questionText.trim()}
+            disabled={!questionText.trim() || !canPost}
           >
-            Post Question
+            Đăng
           </button>
         </div>
       </div>
 
+      <div className="text-sm text-gray-600 mb-2">{total} bình luận</div>
+
       {loading ? (
-        <div className="text-gray-500 text-sm">Loading...</div>
+        <div className="text-gray-500 text-sm">Đang tải...</div>
       ) : items.length === 0 ? (
-        <div className="text-gray-600 text-sm">No questions yet.</div>
+        <div className="text-gray-600 text-sm">Chưa có bình luận.</div>
       ) : (
         <div className="space-y-4">
           {items.map(q => (
@@ -139,8 +190,32 @@ const QnaSection = ({ courseId, lectureId }) => {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900">{q.authorName || 'User'}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm font-medium text-gray-900">{q.authorName || 'User'}</div>
+                    <div className="text-xs text-gray-500">{relTime(q.createdAt)}</div>
+                  </div>
                   <div className="text-sm text-gray-800 whitespace-pre-line mt-1">{q.content}</div>
+                  <div className="mt-2 flex items-center gap-3 text-xs text-gray-600">
+                    <button
+                      className={`px-2 py-1 rounded border ${ (q.likes||[]).includes(userData?._id) ? 'bg-blue-50 border-blue-400 text-blue-700' : 'border-gray-300 hover:bg-gray-50'}`}
+                      onClick={() => toggleLike(q._id)}
+                    >
+                      Thích {Array.isArray(q.likes) ? q.likes.length : 0}
+                    </button>
+                    <span>•</span>
+                    <span>{(q.answers?.length || 0)} phản hồi</span>
+                    <span>•</span>
+                    <button
+                      className="text-blue-600 hover:underline"
+                      onClick={() => {
+                        if (!isLoggedIn) return toast.info('Vui lòng đăng nhập để phản hồi');
+                        if (!canPost) return toast.info('Bạn cần tham gia khóa học để phản hồi');
+                        setOpenReplyFor(prev => ({ ...prev, [q._id]: !prev[q._id] }));
+                      }}
+                    >
+                      Phản hồi
+                    </button>
+                  </div>
                   <div className="mt-3 space-y-3">
                     {(q.answers || []).map((a, idx) => (
                       <div key={idx} className="flex items-start gap-3">
@@ -152,28 +227,42 @@ const QnaSection = ({ courseId, lectureId }) => {
                           </div>
                         )}
                         <div className="bg-gray-50 border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-800 flex-1">
-                          <div className="font-medium text-gray-900">{a.authorName || 'User'}</div>
+                          <div className="flex items-center gap-2">
+                            <div className="font-medium text-gray-900">{a.authorName || 'User'}</div>
+                            <div className="text-xs text-gray-500">{relTime(a.createdAt)}</div>
+                          </div>
                           <div className="mt-0.5 whitespace-pre-line">{a.content}</div>
+                          <div className="mt-2">
+                            <button
+                              className={`px-2 py-1 rounded border text-xs ${ (a.likes||[]).includes(userData?._id) ? 'bg-blue-50 border-blue-400 text-blue-700' : 'border-gray-300 hover:bg-gray-100'}`}
+                              onClick={() => toggleLike(q._id, a._id)}
+                            >
+                              Thích {Array.isArray(a.likes) ? a.likes.length : 0}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
 
-                    <div className="flex items-start gap-2">
-                      <textarea
-                        rows={2}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Write a reply"
-                        value={replyDrafts[q._id] || ''}
-                        onChange={(e) => setReplyDrafts(prev => ({ ...prev, [q._id]: e.target.value }))}
-                      />
-                      <button
-                        className="px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-                        onClick={() => submitAnswer(q._id)}
-                        disabled={!((replyDrafts[q._id] || '').trim())}
-                      >
-                        Reply
-                      </button>
-                    </div>
+                    {openReplyFor[q._id] && (
+                      <div className="flex items-start gap-2">
+                        <textarea
+                          rows={2}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Write a reply"
+                          value={replyDrafts[q._id] || ''}
+                          onChange={(e) => setReplyDrafts(prev => ({ ...prev, [q._id]: e.target.value }))}
+                          disabled={!canPost}
+                        />
+                        <button
+                          className="px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                          onClick={() => submitAnswer(q._id)}
+                          disabled={!((replyDrafts[q._id] || '').trim()) || !canPost}
+                        >
+                          Gửi
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -186,7 +275,7 @@ const QnaSection = ({ courseId, lectureId }) => {
         <div className="flex justify-center mt-4">
           <button
             className="px-3 py-1.5 text-blue-700 border border-blue-600 rounded-md hover:bg-blue-50"
-            onClick={() => fetchList(page + 1)}
+            onClick={() => fetchList(page + 1, true)}
           >
             Load more
           </button>
