@@ -48,7 +48,13 @@ const courseSchema = new mongoose.Schema({
     courseContent: [chapterSchema],
     tests: [testSchema],
     courseRatings: [
-        { userId: { type: String }, rating: { type: Number, min: 1, max: 5 } }
+        {
+          userId: { type: String },
+          rating: { type: Number, min: 1, max: 5 },
+          feedback: { type: String },
+          userName: { type: String },
+          userAvatar: { type: String }
+        }
     ],
     educator: { type: String, ref: 'User', required: true },
     enrolledStudents: [

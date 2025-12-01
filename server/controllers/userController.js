@@ -444,7 +444,7 @@ export const getUserCourseProgress = async (req, res) => {
 
 export const addUserRating = async (req, res) => {
     const userId = req.auth.userId;
-    const { courseId, rating } = req.body;
+    const { courseId, rating, feedback } = req.body;
     if (!courseId || !userId || !rating || rating < 1 || rating > 5) {
         return res.json({ success: false, message: 'Invalid Details' });
     }
@@ -461,20 +461,43 @@ export const addUserRating = async (req, res) => {
         }
 
         const existingRatingIndex = course.courseRatings.findIndex(r => r.userId === userId)
+        let message = 'Rating saved successfully';
         if (existingRatingIndex > -1) {
-            course.courseRatings[existingRatingIndex].rating = rating;
+            const existing = course.courseRatings[existingRatingIndex];
+            const hasFeedbackBefore = !!(existing.feedback && String(existing.feedback).trim());
+            if (hasFeedbackBefore) {
+                return res.json({ success: false, message: 'You have already submitted feedback for this course.' });
+            }
+            // first-time feedback: allow update
+            existing.rating = rating;
+            existing.feedback = feedback;
+            if (!existing.userName) {
+                existing.userName = user?.name || 'User';
+            }
+            if (!existing.userAvatar) {
+                existing.userAvatar = user?.imageUrl || null;
+            }
+            message = 'Feedback saved successfully';
         } else {
-            course.courseRatings.push({ userId, rating });
+            // create new entry
+            course.courseRatings.push({
+                userId,
+                rating,
+                feedback,
+                userName: user?.name || 'User',
+                userAvatar: user?.imageUrl || null
+            });
         }
-        
+
         await course.save();
-        
+
         // Return the updated course ratings along with success message
         return res.json({ 
             success: true, 
-            message: 'Rating saved successfully',
+            message,
             courseRatings: course.courseRatings,
-            userRating: rating
+            userRating: rating,
+            userFeedback: feedback ?? null
         });
     } catch (error) {
         res.json({ success: false, message: error.message })

@@ -30,6 +30,8 @@ const Player = () => {
   const [playerData, setPlayerData] = useState(null);
   const [progressData, setProgressData] = useState(null);
   const [initialRating, setInitialRating] = useState(0);
+  const [ratingValue, setRatingValue] = useState(0);
+  const [feedbackText, setFeedbackText] = useState('');
   const [showTest, setShowTest] = useState(false);
   const [testData, setTestData] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -42,6 +44,7 @@ const Player = () => {
   const [violationCount, setViolationCount] = useState(0);
   const [studentId, setStudentId] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [alreadyFeedback, setAlreadyFeedback] = useState(false);
   const testContainerRef = useRef(null);
   const courseDataCache = useRef(null);
 
@@ -64,7 +67,11 @@ const Player = () => {
       setCourseData(course);
       courseDataCache.current = course;
       const userRating = course.courseRatings.find(item => item.userId === userData._id);
-      setInitialRating(userRating ? userRating.rating : 0);
+      const r = userRating ? userRating.rating : 0;
+      setInitialRating(r);
+      setRatingValue(r);
+      setFeedbackText(userRating && userRating.feedback ? userRating.feedback : '');
+      setAlreadyFeedback(!!(userRating && userRating.feedback && String(userRating.feedback).trim()));
     }
   };
 
@@ -681,11 +688,15 @@ const Player = () => {
   };
 
   const handleRate = async (rating) => {
+    setRatingValue(rating);
+  };
+
+  const handleSubmitRating = async () => {
     try {
       const token = await getToken();
       const { data } = await axios.post(
         `${backendUrl}/api/user/add-rating`,
-        { courseId, rating },
+        { courseId, rating: ratingValue, feedback: feedbackText },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -696,6 +707,7 @@ const Player = () => {
           ...prev,
           courseRatings: data.courseRatings,
         }));
+        setAlreadyFeedback(!!(feedbackText && String(feedbackText).trim()));
       } else {
         toast.error(data.message || 'Failed to submit rating');
       }
@@ -1305,7 +1317,7 @@ const Player = () => {
                                             }
                                           } catch (apiError) {
                                             
-                                            if (progressData && progressData.violations && progressData.violations.isBlocked) {
+                                            if (progressData && progressData.violations) {
                                               toast.error(`You are blocked from taking tests due to ${progressData.violations.count || 'multiple'} violation(s)`);
                                               return;
                                             }
@@ -1337,7 +1349,26 @@ const Player = () => {
 
             <div className="flex items-center gap-2 py-3 mt-10">
               <h1 className="text-xl font-bold">Rate this Course:</h1>
-              <Rating initialRating={initialRating} onRate={handleRate} />
+              <Rating initialRating={ratingValue} onRate={handleRate} disabled={alreadyFeedback} />
+            </div>
+            <div className="mt-3">
+              <textarea
+                value={feedbackText}
+                onChange={(e) => setFeedbackText(e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
+                placeholder="Share your thoughts about this course"
+                disabled={alreadyFeedback}
+              />
+            </div>
+            <div className="mt-3 flex justify-end">
+              <button
+                onClick={handleSubmitRating}
+                disabled={alreadyFeedback || ratingValue < 1}
+                className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {alreadyFeedback ? 'Submitted' : 'Save Feedback'}
+              </button>
             </div>
           </div>
 

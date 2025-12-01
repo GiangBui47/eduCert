@@ -51,9 +51,10 @@ export const paymentPremiumByAda = async (req, res) => {
         if (user) {
             user.premiumPlan = plan;
             if (plan === 'yearly') {
-                user.premiumExpiry = new Date(Date.now() + 365 *24 * 60 * 60 * 1000); // 5 hours
+                user.premiumExpiry = new Date(Date.now() + 365 *24 * 60 * 60 * 1000); 
             } else {
-                user.premiumExpiry = new Date(Date.now() + 30 * 60 * 60 * 1000); // 2 minutes
+                user.premiumExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
             }
             await user.save();
         }

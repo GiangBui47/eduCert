@@ -202,6 +202,7 @@ const CourseDetails = () => {
                                     <div className="flex items-start gap-4 mb-4">
                                         <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden">
                                             <img src={courseData.educator.imageUrl} alt={courseData.educator.name} className="w-full h-full object-cover" />
+
                                         </div>
                                         <div>
                                             <h3
@@ -236,11 +237,45 @@ const CourseDetails = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            <div className="w-full mb-6">
+                                <h2 className="text-xl font-semibold text-black mb-4">Student Feedback</h2>
+                                {Array.isArray(courseData.courseRatings) && courseData.courseRatings.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {courseData.courseRatings.map((fb, idx) => (
+                                            <div key={idx} className="border border-gray-200 rounded-lg p-4 bg-white">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <div className="flex items-center gap-3 min-w-0">
+                                                        {fb.userAvatar ? (
+                                                            <img src={fb.userAvatar} alt={fb.userName || 'User'} className="w-8 h-8 rounded-full object-cover border" />
+                                                        ) : (
+                                                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-medium text-gray-700">
+                                                                {(fb.userName || 'U').slice(0,2).toUpperCase()}
+                                                            </div>
+                                                        )}
+                                                        <div className="text-sm font-medium text-gray-900 truncate">{fb.userName || 'User'}</div>
+                                                    </div>
+                                                    <div className="text-yellow-500 text-sm">
+                                                        {"★".repeat(Math.max(0, Math.min(5, Number(fb.rating) || 0)))}
+                                                        {"☆".repeat(Math.max(0, 5 - (Number(fb.rating) || 0)))}
+                                                    </div>
+                                                </div>
+                                                {fb.feedback ? (
+                                                    <div className="text-sm text-gray-800 whitespace-pre-line">{fb.feedback}</div>
+                                                ) : null}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-600">No feedback yet.</p>
+                                )}
+                            </div>
                         </div>
                         <div className="z-10 w-full md:w-1/3 md:sticky md:top-20">
                             <CourseInformationCard
                                 courseData={courseData}
                                 playerData={playerData}
+
                                 isAlreadyEnrolled={isAlreadyEnrolled}
                                 rating={calculateRating(courseData)}
                                 duration={calculateCourseDuration(courseData)}

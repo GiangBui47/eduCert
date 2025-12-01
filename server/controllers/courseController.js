@@ -108,6 +108,31 @@ export const getCourseId = async (req, res) => {
             });
         }
 
+        // Attach user info (name, avatar) to courseRatings for display
+        try {
+            const ratings = Array.isArray(courseData.courseRatings) ? courseData.courseRatings : [];
+            const userIds = [...new Set(ratings.map(r => r.userId).filter(Boolean))];
+            if (userIds.length > 0) {
+                const users = await User.find({ _id: { $in: userIds } }).select('name imageUrl').lean();
+                const map = Object.fromEntries(users.map(u => [String(u._id), u]));
+                // convert to plain object and attach userName/userAvatar
+                const asObject = typeof courseData.toObject === 'function' ? courseData.toObject() : courseData;
+                asObject.courseRatings = ratings.map(r => {
+                    const base = r && typeof r.toObject === 'function' ? r.toObject() : r;
+                    const u = base && base.userId ? map[String(base.userId)] : null;
+                    return {
+                        ...base,
+                        userName: (u && u.name) ? u.name : 'User',
+                        userAvatar: (u && u.imageUrl) ? u.imageUrl : null,
+                    };
+                });
+                // replace courseData for response if converted
+                courseData._doc ? (courseData._doc.courseRatings = asObject.courseRatings) : (courseData.courseRatings = asObject.courseRatings);
+            }
+        } catch (e) {
+            // ignore enrich errors
+        }
+
         console.log('Course data:', courseData);
         res.json({ success: true, courseData });
 
