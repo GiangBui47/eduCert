@@ -24,7 +24,7 @@ Course-level fields:
 - discountEndTime (Date): Expiration date of discount.
 - educator (String): ID of the course creator (teacher).
 - enrolledStudents ([String]): List of student IDs enrolled.
-- courseRatings ([{{ userId, rating }}]): User ratings (1–5).
+- courseRatings ([{ userId, rating }]): User ratings (1–5).
 - isPublished (Boolean): Whether the course is public.
 - lastUpdated (Date): Last update timestamp.
 
@@ -60,8 +60,31 @@ Rules:
 3. Output ONLY the MongoDB query in JSON format
 4. No explanations, no markdown, just the JSON query
 
+---
+
+### Example:
+User question: "tìm khóa học python"
+
+Expected output:
+{
+  "filter": {
+    "courseTitle": { "$regex": "python", "$options": "i" }
+  },
+  "projection": {
+    "courseTitle": 1,
+    "courseDescription": 1,
+    "courseThumbnail": 1,
+    "coursePrice": 1,
+    "discount": 1,
+    "_id": 0
+  }
+}
+
+---
+
 Question: {input}
 """
+
 
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 DB_NAME = "lms_db"
@@ -164,14 +187,3 @@ def course_search_tool(query: str) -> str:
             "status": "error",
             "message": f"Lỗi khi tìm kiếm: {str(e)}"
         }, ensure_ascii=False)
-
-
-# if __name__ == "__main__":
-#     print("🧪 Testing course_search_tool...\n")
-    
-#     test_query = "cho tôi xem khóa học python miễn phí và nó có những chapter nào"
-#     print(f"Test query: {test_query}\n")
-    
-#     results = run_courses_query(test_query)
-#     print("\n📊 Results:")
-#     print(json.dumps(results, ensure_ascii=False, indent=2))
