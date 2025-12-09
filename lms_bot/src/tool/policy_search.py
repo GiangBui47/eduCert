@@ -59,7 +59,6 @@ def load_or_build_faiss(embedding_model):
     return db
 
 
-# ✅ FIX: Đổi return type thành str để nhất quán
 @tool
 def policy_search_tool(query: str) -> str:
     """
@@ -109,13 +108,12 @@ def policy_search_tool(query: str) -> str:
         }, ensure_ascii=False)
 
 
-if __name__ == "__main__":
-    print("🧪 Testing policy_search_tool...\n")
+# if __name__ == "__main__":
+#     print("🧪 Testing policy_search_tool...\n")
+
+#     test_query = "Làm sao để đăng ký tài khoản mới?"
+#     print(f"Test query: {test_query}\n")
     
-    # Test the tool
-    test_query = "Làm sao để đăng ký tài khoản mới?"
-    print(f"Test query: {test_query}\n")
-    
-    result = policy_search_tool.invoke({"query": test_query})
-    print("\n📊 Results:")
-    print(result)
+#     result = policy_search_tool.invoke({"query": test_query})
+#     print("\n📊 Results:")
+#     print(result)
