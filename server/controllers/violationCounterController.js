@@ -66,6 +66,7 @@ export const getViolationCount = async (req, res) => {
 
         // Tìm bản ghi đếm vi phạm
         const counter = await ViolationCounter.findOne({ studentId, courseId });
+        console.log("Counter:", counter);
         
         if (!counter) {
             // Nếu chưa có bản ghi, trả về count = 0

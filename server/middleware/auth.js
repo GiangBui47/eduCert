@@ -2,6 +2,7 @@ import { clerkClient } from '@clerk/clerk-sdk-node';
 
 export const isAuthenticated = async (req, res, next) => {
     try {
+        console.log("check auth with count violation")
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({
@@ -19,9 +20,18 @@ export const isAuthenticated = async (req, res, next) => {
         }
 
         try {
-            // Verify the session token with Clerk
-            const session = await clerkClient.sessions.verifySession(token);
-            const user = await clerkClient.users.getUser(session.userId);
+            // Sử dụng networkless verification mới của Clerk
+            const payload = await clerkClient.verifyToken(token);
+            console.log('Token verification payload:', payload);
+            
+            if (!payload || !payload.sub) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Invalid token payload'
+                });
+            }
+            
+            const user = await clerkClient.users.getUser(payload.sub);
             
             if (!user) {
                 return res.status(401).json({

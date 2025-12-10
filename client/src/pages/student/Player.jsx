@@ -1374,11 +1374,14 @@ const Player = () => {
                                           }
                                           
                                           try {
+                                    
                                             const response = await axios.get(
                                               `${backendUrl}/api/violation/count?studentId=${userId}&courseId=${courseId}`,
                                               { headers: { Authorization: `Bearer ${token}` } }
                                             );
-                                            
+                                           
+                                            console.log("Response data:", response.data);
+                                          
                                             if (response.data.success) {
                                               const { count, isBlocked: blocked } = response.data;
                                               
@@ -1388,6 +1391,9 @@ const Player = () => {
                                               }
                                             }
                                           } catch (apiError) {
+                                            console.error('Violation API error:', apiError);
+                                            console.error('Error response:', apiError.response?.data);
+                                            console.error('Error status:', apiError.response?.status);
                                             
                                             if (progressData && progressData.violations) {
                                               toast.error(`You are blocked from taking tests due to ${progressData.violations.count || 'multiple'} violation(s)`);
