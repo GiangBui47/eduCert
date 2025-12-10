@@ -182,6 +182,32 @@ const TransactionChecker = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="space-y-8">
                   <div>
+                    {selectedNFT.metadata?.["721"] &&
+                        Object.keys(selectedNFT.metadata["721"])
+                          .filter((key) => key !== "version")
+                          .map((policyId) =>
+                            Object.keys(selectedNFT.metadata["721"][policyId]).map((assetKey) => {
+                              const assetInfo = selectedNFT.metadata["721"][policyId][assetKey];
+                              const ipfsLink = assetInfo?.image;
+                              if (!ipfsLink) return null;
+                      
+                              const imageUrl = ipfsLink.startsWith("ipfs://")
+                                ? `https://ipfs.io/ipfs/${ipfsLink.replace("ipfs://", "")}`
+                                : ipfsLink;
+                      
+                              return (
+                                <div key={assetKey} className="mb-6 flex justify-center">
+                                  <img
+                                    src={imageUrl}
+                                    alt={assetKey}
+                                    className="w-48 h-48 rounded-lg object-cover border bg-white shadow"
+                                  />
+                                </div>
+                              );
+                            })
+                          )
+                      }
+
                     <h3 className="text-xl font-semibold text-gray-800 mb-4">NFT Details</h3>
                     <div className="bg-gray-50 p-6 rounded-lg space-y-6">
                       <div>
