@@ -17,7 +17,7 @@ export const paymentByAda = async (req, res) => {
             return res.status(400).json({ 
                 success: false, 
                 message: 'You already own this course.',
-                redirectUrl: `${redirectUrl || 'https://client-react-brown.vercel.app'}/my-enrollments?status=info&message=You already own this course.`
+                redirectUrl: `${redirectUrl || 'https://edu-cert-nine.vercel.app'}/my-enrollments?status=info&message=You already own this course.`
             });
         }
         const unsignedTx = await sendAda(utxos, changeAddress, getAddress, value);
@@ -25,20 +25,20 @@ export const paymentByAda = async (req, res) => {
             return res.status(500).json({ 
                 success: false, 
                 message: "Loi thanh toan",
-                redirectUrl: `${redirectUrl || 'https://client-react-brown.vercel.app'}/my-enrollments?status=error&message=Payment failed. Please try again.`
+                redirectUrl: `${redirectUrl || 'https://edu-cert-nine.vercel.app'}/my-enrollments?status=error&message=Payment failed. Please try again.`
             });
         }
         res.json({ 
             success: true, 
             unsignedTx,
-            redirectUrl: `${redirectUrl || 'https://client-react-brown.vercel.app'}/my-enrollments?status=success&message=Payment successful! You are now enrolled in the course.`
+            redirectUrl: `${redirectUrl || 'https://edu-cert-nine.vercel.app'}/my-enrollments?status=success&message=Payment successful! You are now enrolled in the course.`
         });
     } catch (error) {
         console.error("Lỗi thanh toan:", error);
         res.status(500).json({ 
             success: false, 
             message: error.message,
-            redirectUrl: `${redirectUrl || 'https://client-react-brown.vercel.app'}/my-enrollments?status=error&message=${encodeURIComponent(error.message)}`
+            redirectUrl: `${redirectUrl || 'https://edu-cert-nine.vercel.app'}/my-enrollments?status=error&message=${encodeURIComponent(error.message)}`
         });
     }
 };
@@ -185,7 +185,7 @@ export const paypalSuccess = async (req, res) => {
         if (isAlreadyEnrolled) {
             console.log(`User ${userId} already enrolled in course ${courseId}. Skipping enrollment.`);
             // Vẫn chuyển hướng đến trang my-enrollments nhưng với thông báo khác
-            const origin = req.get('origin') || 'https://client-react-brown.vercel.app';
+            const origin = req.get('origin') || 'https://edu-cert-nine.vercel.app';
             return res.redirect(`${origin}/my-enrollments?status=info&message=You are already enrolled in this course.`);
         }
 
@@ -210,17 +210,17 @@ export const paypalSuccess = async (req, res) => {
         await user.save();
         await course.save();
 
-        const origin = req.get('origin') || 'https://client-react-brown.vercel.app';
+        const origin = req.get('origin') || 'https://edu-cert-nine.vercel.app';
         res.redirect(`${origin}/my-enrollments?status=success&message=Payment successful! You are now enrolled in the course.`);
     } catch (error) {
         console.error('PayPal success error:', error);
-        const origin = req.get('origin') || 'https://client-react-brown.vercel.app';
+        const origin = req.get('origin') || 'https://edu-cert-nine.vercel.app';
         res.redirect(`${origin}/my-enrollments?status=error&message=${encodeURIComponent(error.message)}`);
     }
 };
 
 export const paypalCancel = async (req, res) => {
-    const origin = req.get('origin') || 'https://client-react-brown.vercel.app';
+    const origin = req.get('origin') || 'https://edu-cert-nine.vercel.app';
     res.redirect(`${origin}/my-enrollments?status=cancelled&message=Payment was cancelled.`);
 };
 
@@ -259,7 +259,7 @@ export const paypalCancel = async (req, res) => {
         });
 
         // Tạo session Stripe với thông tin chi tiết hơn
-        const clientOrigin = req.get('origin') || 'https://client-react-brown.vercel.app';
+        const clientOrigin = req.get('origin') || 'https://edu-cert-nine.vercel.app';
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             success_url: `${clientOrigin}/my-enrollments?purchase_id=${purchase._id.toString()}&status=success`,
@@ -356,11 +356,11 @@ export const stripeSuccess = async (req, res) => {
         }
 
         // Chuyển hướng người dùng đến trang my-enrollments với thông báo thành công
-        const clientOrigin = req.get('origin') || 'https://client-react-brown.vercel.app';
+        const clientOrigin = req.get('origin') || 'https://edu-cert-nine.vercel.app';
         res.redirect(`${clientOrigin}/my-enrollments?status=success&message=Payment successful! You are now enrolled in the course.`);
     } catch (error) {
         console.error('Stripe success handler error:', error);
-        const clientOrigin = req.get('origin') || 'https://client-react-brown.vercel.app';
+        const clientOrigin = req.get('origin') || 'https://edu-cert-nine.vercel.app';
         res.redirect(`${clientOrigin}/my-enrollments?status=error&message=${encodeURIComponent(error.message || 'Payment processing failed')}`);
 
     }
@@ -374,6 +374,6 @@ export const stripeCancel = async (req, res) => {
     } catch (error) {
         console.error('Stripe cancel error:', error);
     }
-    const origin = req.get('origin') || req.get('referer')?.replace(/\/[^/]*$/, '') || 'https://client-react-brown.vercel.app';
+    const origin = req.get('origin') || req.get('referer')?.replace(/\/[^/]*$/, '') || 'https://edu-cert-nine.vercel.app';
     res.redirect(`${origin}/courses`);
 };
