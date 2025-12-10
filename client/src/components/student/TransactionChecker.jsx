@@ -180,8 +180,7 @@ const TransactionChecker = () => {
             </div>
             {activeTab === "nft" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="space-y-8">
-                  {selectedNFT.metadata?.["721"] &&
+                {selectedNFT.metadata?.["721"] &&
                       Object.keys(selectedNFT.metadata["721"])
                         .filter((key) => key !== "version")
                         .map((policyId) =>
@@ -210,6 +209,8 @@ const TransactionChecker = () => {
                           })
                         )
                     }
+                <div className="space-y-8">
+                  
                   <div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-4">NFT Details</h3>
                     <div className="bg-gray-50 p-6 rounded-lg space-y-6">
