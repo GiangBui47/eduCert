@@ -141,7 +141,7 @@ const TransactionChecker = () => {
         <div className="flex flex-col items-center justify-center p-8 bg-white rounded-xl shadow-sm">
           <div className="mb-6 bg-indigo-50 p-4 rounded-lg">
             <QRCodeSVG
-              value="https://client-react-brown.vercel.app/"
+              value="https://edu-cert-nine.vercel.app/"
               size={250}
               level="H"
               bgColor="#EEF2FF"
