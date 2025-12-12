@@ -20,7 +20,7 @@
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@pinata/sdk": "^2.1.0",
     "axios": "^1.8.3",
-    "canvas": "^3.1.0",
+    "@napi-rs/canvas": "^0.1.59",
     "cbor-x": "^1.6.0",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",

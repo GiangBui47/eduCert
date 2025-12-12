@@ -1,11 +1,7 @@
-import { createCanvas } from 'canvas';
+import { createCanvas } from '@napi-rs/canvas';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import canvas from 'canvas';
-
-// Đổi tên để tránh xung đột
-const createCanvasImage = canvas.createCanvas;
 
 /**
  * Generate certificate image with student and course information
@@ -22,7 +18,7 @@ async function generateCertificateImage(studentName, educatorName, courseTitle, 
         console.log('Creating certificate at:', imagePath);
 
         // Create a canvas
-        const canvas = createCanvasImage(800, 600);
+        const canvas = createCanvas(800, 600);
         const ctx = canvas.getContext('2d');
 
         // Set background
@@ -35,23 +31,23 @@ async function generateCertificateImage(studentName, educatorName, courseTitle, 
         ctx.strokeRect(10, 10, 780, 580);
 
         // Add certificate title
-        ctx.font = 'bold 40px Arial';
+        ctx.font = 'bold 40px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#000000';
         ctx.fillText('Certificate of Completion', 400, 100);
 
         // Add student name
-        ctx.font = 'bold 30px Arial';
+        ctx.font = 'bold 30px sans-serif';
         ctx.fillText(studentName, 400, 200);
 
         // Add course info
-        ctx.font = '25px Arial';
+        ctx.font = '25px sans-serif';
         ctx.fillText(`has successfully completed the course`, 400, 250);
-        ctx.font = 'bold 30px Arial';
+        ctx.font = 'bold 30px sans-serif';
         ctx.fillText(courseTitle, 400, 300);
 
         // Add educator name
-        ctx.font = '20px Arial';
+        ctx.font = '20px sans-serif';
         ctx.fillText(`Instructor: ${educatorName}`, 400, 400);
 
         // Add date
@@ -75,7 +71,7 @@ async function generateCertificateBuffer(studentName, educatorName, courseTitle,
         // Create a canvas with larger dimensions for better quality
         const width = 1200;
         const height = 800;
-        const canvas = createCanvasImage(width, height);
+        const canvas = createCanvas(width, height);
         const ctx = canvas.getContext('2d');
         
         // Constants for positioning
@@ -158,12 +154,12 @@ async function generateCertificateBuffer(studentName, educatorName, courseTitle,
         ctx.stroke();
         
         // Add certificate title
-        ctx.font = 'bold 60px Arial';
+        ctx.font = 'bold 60px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#2980b9'; // Blue color
         ctx.fillText('CERTIFICATE', centerX, 150);
         
-        ctx.font = 'bold 36px Arial';
+        ctx.font = 'bold 36px sans-serif';
         ctx.fillStyle = '#464646'; // Dark gray
         ctx.fillText('OF ACHIEVEMENT', centerX, 200);
         
@@ -176,27 +172,27 @@ async function generateCertificateBuffer(studentName, educatorName, courseTitle,
         ctx.stroke();
         
         // Add "This is to certify that"
-        ctx.font = '28px Arial';
+        ctx.font = '28px sans-serif';
         ctx.fillStyle = '#464646';
         ctx.fillText('This is to certify that', centerX, 280);
         
         // Add student name
-        ctx.font = 'bold 48px Arial';
+        ctx.font = 'bold 48px sans-serif';
         ctx.fillStyle = '#2980b9';
         ctx.fillText(studentName, centerX, 350);
         
         // Add course completion text
-        ctx.font = '28px Arial';
+        ctx.font = '28px sans-serif';
         ctx.fillStyle = '#464646';
         ctx.fillText('has successfully completed the course', centerX, 420);
         
         // Add course title
-        ctx.font = 'bold 40px Arial';
+        ctx.font = 'bold 40px sans-serif';
         ctx.fillStyle = '#2980b9';
         ctx.fillText(courseTitle, centerX, 480);
         
         // Add educator name
-        ctx.font = '24px Arial';
+        ctx.font = '24px sans-serif';
         ctx.fillStyle = '#464646';
         ctx.fillText(`Instructor: ${educatorName}`, centerX, 550);
         
@@ -204,7 +200,7 @@ async function generateCertificateBuffer(studentName, educatorName, courseTitle,
         ctx.fillText(`Date: ${date}`, centerX, 590);
         
         // Add Cardano verification text
-        ctx.font = 'italic 18px Arial';
+        ctx.font = 'italic 18px sans-serif';
         ctx.fillStyle = '#666666';
         ctx.fillText('Verified on Cardano Blockchain', centerX, height - 80);
         
@@ -216,7 +212,7 @@ async function generateCertificateBuffer(studentName, educatorName, courseTitle,
         ctx.lineTo(centerX + 150, height - 150);
         ctx.stroke();
         
-        ctx.font = '20px Arial';
+        ctx.font = '20px sans-serif';
         ctx.fillStyle = '#464646';
         ctx.fillText('Authorized Signature', centerX, height - 120);
         
