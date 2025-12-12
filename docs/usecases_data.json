@@ -1,0 +1,357 @@
+{
+  "title": "Đặc tả Use Case hệ thống eduCert (bản rút gọn)",
+  "roles": [
+    {
+      "role": "Khách vãng lai",
+      "usecases": [
+        {
+          "name": "Khám phá và xem khóa học",
+          "description": "Xem danh sách/top-rated/chi tiết; tìm/lọc (chỉ xem).",
+          "actors": "Khách vãng lai",
+          "preconditions": "Truy cập hệ thống",
+          "postconditions": [
+            "Thông tin khóa được hiển thị"
+          ],
+          "main_flow": [
+            "Mở danh sách/top-rated",
+            "(Tùy) Tìm kiếm/Lọc",
+            "Xem chi tiết khóa học"
+          ],
+          "alternate_flow": [
+            "Không có kết quả → Hiển thị rỗng/khuyến nghị"
+          ]
+        },
+        {
+          "name": "Xem Q&A (danh sách)",
+          "description": "Xem danh sách Q&A theo khóa/bài (chỉ đọc).",
+          "actors": "Khách vãng lai",
+          "preconditions": "Truy cập hệ thống",
+          "postconditions": ["Danh sách Q&A được hiển thị"],
+          "main_flow": ["Chọn khóa/bài", "Xem danh sách Q&A"],
+          "alternate_flow": ["Chưa có câu hỏi → Danh sách rỗng"]
+        },
+        {
+          "name": "Tra cứu chứng chỉ (public)",
+          "description": "Tra cứu chứng chỉ theo user+course hoặc txHash.",
+          "actors": "Khách vãng lai",
+          "preconditions": "Có tham số tra cứu hợp lệ",
+          "postconditions": ["Hiển thị chứng chỉ hoặc thông báo không tồn tại"],
+          "main_flow": ["Nhập userId+courseId hoặc txHash", "Xem kết quả"],
+          "alternate_flow": ["Không tìm thấy → Thông báo không tồn tại"]
+        },
+        {
+          "name": "Tra cứu/kiểm tra địa chỉ ví",
+          "description": "Tìm/kiểm tra địa chỉ ví trong hệ thống (public).",
+          "actors": "Khách vãng lai",
+          "preconditions": "Có tham số tra cứu",
+          "postconditions": ["Trả kết quả hợp lệ/không hợp lệ"],
+          "main_flow": ["Gửi yêu cầu tìm/kiểm tra", "Nhận kết quả"],
+          "alternate_flow": ["Không hợp lệ → Cảnh báo"]
+        },
+        {
+          "name": "Đăng ký/Đăng nhập",
+          "description": "Xác thực qua nhà cung cấp định danh để trở thành người dùng.",
+          "actors": "Khách vãng lai, Hệ thống định danh",
+          "preconditions": "Có/tạo tài khoản",
+          "postconditions": ["Phiên đăng nhập hợp lệ"],
+          "main_flow": ["Chọn đăng ký/đăng nhập", "Xác thực tại IDP", "Trở lại hệ thống"],
+          "alternate_flow": ["Xác thực thất bại → Báo lỗi"]
+        }
+      ]
+    },
+    {
+      "role": "Học viên",
+      "usecases": [
+        {
+          "name": "Xem khóa học",
+          "description": "Xem danh sách/top-rated/chi tiết; tìm/lọc.",
+          "actors": "Học viên",
+          "preconditions": "Truy cập hệ thống",
+          "postconditions": ["Thông tin khóa hiển thị"],
+          "main_flow": ["Mở danh sách", "Chọn khóa", "Xem chi tiết"],
+          "alternate_flow": ["Không kết quả → Danh sách rỗng"]
+        },
+        {
+          "name": "Thanh toán khóa học",
+          "description": "Thanh toán ADA/PayPal/Stripe; nhận callback.",
+          "actors": "Học viên, Cổng thanh toán",
+          "preconditions": "Đăng nhập; chọn khóa",
+          "postconditions": ["Giao dịch completed hoặc failed/cancel"],
+          "main_flow": ["Chọn phương thức", "Tạo yêu cầu/redirect", "Callback", "Lưu trạng thái"],
+          "alternate_flow": ["Hủy/lỗi → failed/cancel"]
+        },
+        {
+          "name": "Ghi danh khóa học",
+          "description": "Enroll sau thanh toán hoặc được thêm thủ công.",
+          "actors": "Học viên",
+          "preconditions": "Giao dịch hợp lệ hoặc được giảng viên thêm",
+          "postconditions": ["Có bản ghi enroll"],
+          "main_flow": ["Xác thực giao dịch", "Tạo enroll", "Xác nhận"],
+          "alternate_flow": ["Giao dịch sai → Từ chối"]
+        },
+        {
+          "name": "Học & cập nhật tiến độ",
+          "description": "Đánh dấu bài/khóa đã hoàn thành.",
+          "actors": "Học viên",
+          "preconditions": "Đã ghi danh",
+          "postconditions": ["Tiến độ/hoàn thành cập nhật"],
+          "main_flow": ["Mở bài", "Lưu hoàn thành", "Kiểm tra điều kiện", "Cập nhật trạng thái"],
+          "alternate_flow": ["Chưa đủ điều kiện → Chỉ lưu từng phần"]
+        },
+        {
+          "name": "Làm bài kiểm tra",
+          "description": "Làm test; chấm MCQ tự động.",
+          "actors": "Học viên",
+          "preconditions": "Đủ điều kiện mở bài",
+          "postconditions": ["Có điểm và trạng thái pass/fail"],
+          "main_flow": ["Bắt đầu", "Tải đề", "Nộp", "Chấm/lưu"],
+          "alternate_flow": ["Hết giờ → Auto-submit"]
+        },
+        {
+          "name": "Nhận chứng chỉ",
+          "description": "Cấp chứng chỉ khi đạt điều kiện.",
+          "actors": "Học viên, Giảng viên",
+          "preconditions": "Hoàn thành khóa/điểm đạt",
+          "postconditions": ["Có record chứng chỉ"],
+          "main_flow": ["Yêu cầu/duyệt", "Tạo record", "Trả link/thông báo"],
+          "alternate_flow": ["Chưa đủ điều kiện → Từ chối"]
+        },
+        {
+          "name": "Mint chứng chỉ NFT",
+          "description": "Mint NFT cho chứng chỉ.",
+          "actors": "Học viên/Quản trị, Blockchain",
+          "preconditions": "Có record chứng chỉ + metadata",
+          "postconditions": ["Lưu txHash/policyId/assetName"],
+          "main_flow": ["Tạo unsigned", "Ký & phát", "Cập nhật record"],
+          "alternate_flow": ["Lỗi ký/phát → Retry"]
+        },
+        {
+          "name": "Đánh giá khóa học",
+          "description": "Rating 1–5 + feedback.",
+          "actors": "Học viên",
+          "preconditions": "Đã học (khuyến nghị)",
+          "postconditions": ["Đánh giá lưu/hiển thị"],
+          "main_flow": ["Nhập rating/feedback", "Lưu", "Hiển thị"],
+          "alternate_flow": ["Dữ liệu sai → Báo lỗi"]
+        },
+        {
+          "name": "Q&A bài giảng",
+          "description": "Hỏi, trả lời, like/unlike.",
+          "actors": "Học viên",
+          "preconditions": "Đăng nhập",
+          "postconditions": ["Q&A được lưu/hiển thị"],
+          "main_flow": ["Tạo câu hỏi", "Thêm trả lời", "Like/Unlike"],
+          "alternate_flow": ["Nội dung vi phạm → Từ chối/Xóa"]
+        },
+        {
+          "name": "Hồ sơ cá nhân/KYC NFT",
+          "description": "Xem/cập nhật hồ sơ; upload IPFS; (tùy) unsigned TX.",
+          "actors": "Học viên",
+          "preconditions": "Đăng nhập; ảnh hợp lệ",
+          "postconditions": ["Hồ sơ/URL IPFS cập nhật"],
+          "main_flow": ["Xem hồ sơ", "Upload IPFS", "Cập nhật metadata", "(Tùy) Tạo unsigned"],
+          "alternate_flow": ["Upload lỗi → Báo lỗi"]
+        },
+        {
+          "name": "Thông báo",
+          "description": "Danh sách, chưa đọc, đánh dấu đã đọc, trạng thái cert.",
+          "actors": "Học viên",
+          "preconditions": "Đăng nhập",
+          "postconditions": ["Trạng thái đọc cập nhật"],
+          "main_flow": ["List", "Unread count", "Mark read", "Cert status"],
+          "alternate_flow": ["ID sai → Báo lỗi"]
+        },
+        {
+          "name": "Tài khoản & lịch sử mua",
+          "description": "Xem thông tin user & lịch sử giao dịch.",
+          "actors": "Học viên",
+          "preconditions": "Đăng nhập",
+          "postconditions": ["Dữ liệu hiển thị"],
+          "main_flow": ["Lấy thông tin", "Lấy lịch sử"],
+          "alternate_flow": ["Không có lịch sử → Rỗng"]
+        },
+        {
+          "name": "Kiểm tra ví đã mua",
+          "description": "Verify ví đã dùng mua khóa.",
+          "actors": "Học viên",
+          "preconditions": "Có courseId + giao dịch",
+          "postconditions": ["Kết quả True/False"],
+          "main_flow": ["Gửi courseId", "So khớp", "Trả kết quả"],
+          "alternate_flow": ["Không khớp → False"]
+        },
+        {
+          "name": "Mua gói Premium",
+          "description": "Thanh toán gói Premium; kích hoạt.",
+          "actors": "Học viên, Cổng thanh toán",
+          "preconditions": "Đăng nhập; chọn gói",
+          "postconditions": ["Premium hoạt động"],
+          "main_flow": ["Chọn gói", "Thanh toán", "Callback", "Cập nhật"],
+          "alternate_flow": ["Hủy/lỗi → Failed"]
+        }
+      ]
+    },
+    {
+      "role": "Giảng viên",
+      "usecases": [
+        {
+          "name": "Nâng quyền giảng viên",
+          "description": "Chuyển role sang educator.",
+          "actors": "Người dùng, Hệ thống định danh",
+          "preconditions": "Đăng nhập",
+          "postconditions": ["Role=educator"],
+          "main_flow": ["Gửi yêu cầu", "Cập nhật role"],
+          "alternate_flow": ["Không đủ điều kiện → Từ chối"]
+        },
+        {
+          "name": "Quản lý khóa học",
+          "description": "Tạo/cập nhật/xóa/mở lại; liệt kê của tôi.",
+          "actors": "Giảng viên",
+          "preconditions": "Role educator",
+          "postconditions": ["Khóa học được cập nhật"],
+          "main_flow": ["Tạo", "Cập nhật", "Xóa/Mở lại", "Liệt kê của tôi"],
+          "alternate_flow": ["Thiếu dữ liệu → Báo lỗi"]
+        },
+        {
+          "name": "Quản lý học viên theo khóa",
+          "description": "Xem danh sách, tìm email, thêm thủ công.",
+          "actors": "Giảng viên",
+          "preconditions": "Có khóa học",
+          "postconditions": ["Enroll cập nhật"],
+          "main_flow": ["Xem danh sách", "Tìm email", "Thêm học viên"],
+          "alternate_flow": ["Đã tồn tại → Bỏ qua"]
+        },
+        {
+          "name": "Xem dashboard giảng viên",
+          "description": "Tổng hợp số liệu khóa/học viên/doanh thu.",
+          "actors": "Giảng viên",
+          "preconditions": "Role educator",
+          "postconditions": ["Số liệu hiển thị"],
+          "main_flow": ["Yêu cầu dashboard", "Nhận tổng hợp"],
+          "alternate_flow": ["Không dữ liệu → Rỗng"]
+        },
+        {
+          "name": "Theo dõi/Đồng bộ vi phạm",
+          "description": "Tra cứu/đồng bộ bộ đếm với record vi phạm.",
+          "actors": "Giảng viên",
+          "preconditions": "Có record vi phạm",
+          "postconditions": ["Bộ đếm/tiến độ đồng bộ"],
+          "main_flow": ["Tra cứu", "Đồng bộ", "Kiểm tra ngưỡng"],
+          "alternate_flow": ["Lỗi dữ liệu → Ghi log"]
+        },
+        {
+          "name": "Tạo TX blockchain cho khóa",
+          "description": "Sinh unsigned TX cho metadata khóa.",
+          "actors": "Giảng viên",
+          "preconditions": "Dữ liệu hợp lệ",
+          "postconditions": ["Nhận unsigned TX"],
+          "main_flow": ["Gửi yêu cầu", "Nhận unsigned"],
+          "alternate_flow": ["Thiếu dữ liệu → Báo lỗi"]
+        }
+      ]
+    },
+    {
+      "role": "Quản trị",
+      "usecases": [
+        {
+          "name": "Quản trị người dùng",
+          "description": "List/Search; cập nhật vai trò; xóa user.",
+          "actors": "Quản trị",
+          "preconditions": "Admin",
+          "postconditions": ["Vai trò/record cập nhật nhất quán"],
+          "main_flow": ["Lọc/Tìm", "Cập nhật role", "Xóa user"],
+          "alternate_flow": ["Cấm hạ admin/tự hạ → Từ chối"]
+        },
+        {
+          "name": "Cấu hình Premium",
+          "description": "Cập nhật ví ADA/email PayPal nhận tiền.",
+          "actors": "Quản trị",
+          "preconditions": "Admin",
+          "postconditions": ["Cấu hình lưu"],
+          "main_flow": ["Xem cấu hình", "Nhập giá trị", "Lưu"],
+          "alternate_flow": ["Dữ liệu không hợp lệ → Báo lỗi"]
+        },
+        {
+          "name": "Giao dịch/Thống kê Premium",
+          "description": "Lọc/phan trang; thống kê theo phương thức/tiền tệ/thời gian.",
+          "actors": "Quản trị",
+          "preconditions": "Admin",
+          "postconditions": ["Báo cáo hiển thị"],
+          "main_flow": ["Chọn bộ lọc", "Xem danh sách", "Xem thống kê"],
+          "alternate_flow": ["Không dữ liệu → Rỗng"]
+        },
+        {
+          "name": "Quản lý chứng chỉ",
+          "description": "Tạo/cập nhật tx/policy/asset; tra cứu.",
+          "actors": "Quản trị",
+          "preconditions": "Dữ liệu hợp lệ",
+          "postconditions": ["Record chứng chỉ cập nhật/tra cứu"],
+          "main_flow": ["Tạo/Cập nhật", "Tra cứu", "Lưu"],
+          "alternate_flow": ["Không tìm thấy → Báo"]
+        },
+        {
+          "name": "Batch mint chứng chỉ",
+          "description": "Mint NFT chứng chỉ hàng loạt.",
+          "actors": "Quản trị, Blockchain",
+          "preconditions": "Danh sách đủ điều kiện",
+          "postconditions": ["txHash/policyId từng chứng chỉ"],
+          "main_flow": ["Chuẩn bị batch", "Ký/Phát giao dịch", "Cập nhật kết quả"],
+          "alternate_flow": ["Partial-fail → Ghi nhận"]
+        },
+        {
+          "name": "Quản lý vi phạm",
+          "description": "Tra cứu/đồng bộ/đếm; isBlocked khi vượt ngưỡng.",
+          "actors": "Quản trị",
+          "preconditions": "Có dữ liệu vi phạm",
+          "postconditions": ["Dữ liệu vi phạm nhất quán"],
+          "main_flow": ["Tra cứu", "Đồng bộ", "Đánh dấu isBlocked"],
+          "alternate_flow": ["Lỗi phần tử → Log"]
+        },
+        {
+          "name": "NFT cho vi phạm",
+          "description": "Tạo TX & gắn tx/policy cho vi phạm.",
+          "actors": "Quản trị, Blockchain",
+          "preconditions": "Có violation record",
+          "postconditions": ["Thông tin on-chain cho vi phạm"],
+          "main_flow": ["Tạo TX", "Cập nhật record"],
+          "alternate_flow": ["TX lỗi → Retry"]
+        },
+        {
+          "name": "Quản lý địa chỉ ví",
+          "description": "Lưu/tra cứu/kiểm tra địa chỉ ví.",
+          "actors": "Quản trị",
+          "preconditions": "Dữ liệu hợp lệ",
+          "postconditions": ["Bản ghi cập nhật/tra cứu"],
+          "main_flow": ["Lưu", "Tra cứu/Check"],
+          "alternate_flow": ["Không hợp lệ → Báo lỗi"]
+        },
+        {
+          "name": "Upload IPFS",
+          "description": "Upload file → ipfs:// + gateway URL.",
+          "actors": "Quản trị",
+          "preconditions": "File hợp lệ",
+          "postconditions": ["Có URL IPFS & gateway"],
+          "main_flow": ["Chọn file", "Upload", "Nhận URL"],
+          "alternate_flow": ["Upload lỗi → Báo"]
+        },
+        {
+          "name": "Xử lý webhook",
+          "description": "Nhận sự kiện Clerk/Stripe, verify, cập nhật.",
+          "actors": "Hệ thống Webhooks",
+          "preconditions": "Secret đúng",
+          "postconditions": ["Dữ liệu đồng bộ"],
+          "main_flow": ["Nhận", "Xác minh chữ ký", "Xử lý & log"],
+          "alternate_flow": ["Chữ ký sai → Từ chối"]
+        },
+        {
+          "name": "Khởi tạo admin mặc định",
+          "description": "Đảm bảo có tối thiểu 1 admin khi khởi động.",
+          "actors": "Hệ thống",
+          "preconditions": "DEFAULT_ADMIN_* cấu hình",
+          "postconditions": ["Có admin + user local"],
+          "main_flow": ["Kiểm tra", "Tạo/Tìm", "Set role", "Tạo user local"],
+          "alternate_flow": ["Email đã tồn tại → Lấy lại & tiếp tục"]
+        }
+      ]
+    }
+  ]
+}
