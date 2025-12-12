@@ -61,7 +61,8 @@ export const createNewCertificate = async (req, res) => {
 
 export const createUnsignedMintTx = async (req, res) => {
     try {
-        console.log('Received request body:', JSON.stringify(req.body, null, 2));
+        console.log('Sending utxos:', req.body.utxos);
+        console.log('Sending collateral:', req.body.collateral);
         const { courseId, utxos, userAddress, collateral, courseData } = req.body;
         const studentName = courseData?.studentName || "Student";
         const userId = courseData?.userId || "";

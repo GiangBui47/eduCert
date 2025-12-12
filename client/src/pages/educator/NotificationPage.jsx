@@ -76,6 +76,8 @@ const NotificationPage = () => {
                 wallet.getCollateral(),
                 wallet.getUsedAddresses()
             ]);
+            console.log('Sending utxos:', utxos);
+            console.log('Sending collateral:', collateral);
             if (!utxos || !collateral) throw new Error('Failed to get UTXOs or collateral');
             if (userData?._id !== addressData?.address?.educatorId) throw new Error('You are not the educator of this course.');
             if (educatorAddress[0] !== addressData?.address?.educatorWallet) throw new Error('The wallet being connected is not the wallet registered for this course');
